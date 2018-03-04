@@ -1,0 +1,35 @@
+@hh : 50px;
+
+// colors
+@color1: #eef0e9;
+@color2: #fceac6;
+@color3: #e6b790;
+@color4: #a55f41;
+@color5: #503434;
+
+.Home{
+	width: 700px;
+	border: 1px solid;
+
+	& header{
+		min-height: @hh;
+		line-height: @hh;
+		padding: 10px;
+		box-sizing: padding-box;
+		font-size: 44px;
+		text-align: center;
+		background: @color4;
+		color: @color1;
+	}
+
+	& main{
+		background: @color2;
+		padding: 10px;
+	}
+
+	& footer{
+		background: @color3;
+		padding: 10px;
+	}
+}
+
