@@ -1,8 +1,8 @@
 import React from 'react'
 
 //	components
-import StatusWindow from './StatusWindow.jsx'
-import ContentBox from './ContentBox.jsx'
+import StatusWindow from './StatusWindow/StatusWindow.jsx'
+import ContentBox from './ContentBox/ContentBox.jsx'
 
 //	flux 
 import AppStore from '../stores/AppStore.js'
@@ -12,6 +12,7 @@ import AppActions from '../actions/AppActions.js'
 import './App.less'
 import './etc/uprise.less'
 
+const l = console.log
 
 class App extends React.Component{
 	constructor(props){
@@ -20,15 +21,16 @@ class App extends React.Component{
 		this.handlePageChange = this.handlePageChange.bind(this)
 	}
 
-	handlePageChange(){
+	handlePageChange(href){
+		l('href : ', href)
 		//	get current open page
 
 		//	check handleRemove
 
-		// return handleRemove Promise or return new Promise
+		/*// return handleRemove Promise or return new Promise
 		return new Promise( (resolve, reject) => {
 			resolve()
-		})
+		})*/
 	}
 
 	/*closeCurrent(){

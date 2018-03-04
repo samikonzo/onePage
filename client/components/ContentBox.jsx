@@ -65,15 +65,12 @@ class ContentBox extends React.Component{
 	render(){
 		return(
 			<div className="ContentBox">
-				ContentBox
-				
-
 				<Switch>
 					<Route exact path='/' render={ (props) => {
 							return <Home {...props} ref={item => this.currentOpen = item} />
 						}
 					}/>
-					<Route exact path='/items' render={ (props) => {
+					<Route path='/items' render={ (props) => {
 							return <Items {...props} ref={item => this.currentOpen = item} />
 						}
 					}/>

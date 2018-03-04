@@ -1,5 +1,3 @@
 export default {
-	/*
-		some constants
-	*/
+	CHANGE_PAGE	: 'CHANGE_PAGE',
 }
