@@ -54,9 +54,9 @@ class ContentBox extends React.Component{
 		transitionTime *= 1000
 		
 
-		this.setState({
+		/*this.setState({
 			show: false
-		})
+		})*/
 
 		return new Promise( (resolve, reject) => {
 			setTimeout(() => {
@@ -70,12 +70,12 @@ class ContentBox extends React.Component{
 			show: true
 		})
 
-		var transitionTime = +getComputedStyle(this.elem).transitionDuration.match(/\d+(\.\d+)?/)[0]
+		/*var transitionTime = +getComputedStyle(this.elem).transitionDuration.match(/\d+(\.\d+)?/)[0]
 		transitionTime *= 1000
 
 		setTimeout(() => {
 			this._emitRunAfterShow()
-		}, transitionTime)
+		}, transitionTime)*/
 	}
 
 	_addToRunAfterShow(f){
