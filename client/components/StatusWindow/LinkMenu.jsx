@@ -1,11 +1,12 @@
 import React from 'react'
-//import DelayLink from './DelayLink.jsx'
-import AppActions from '../actions/AppActions.js'
-import AppStore from '../stores/AppStore.js'
+import DelayLink from '../DelayLink.jsx'
+import AppActions from '../../actions/AppActions.js'
+import AppStore from '../../stores/AppStore.js'
+import { Link } from 'react-router-dom'
 import './LinkMenu.less'
 
 function l(){
-	console.log('Link : ', ...arguments)
+	console.log('LinkMenu : ', ...arguments)
 }
 
 class LinkMenu extends React.Component{
@@ -13,42 +14,48 @@ class LinkMenu extends React.Component{
 		super(props)
 
 		this.state = {
-			selected : '/',
+			selected 	: AppStore.getCurrentPage(),
+			pages 		: this.props.pages
 		}
 
 		this.changePage = this.changePage.bind(this) 
 		this._onPageChange = this._onPageChange.bind(this)
 	}
 
-	componentWillMount(){
-		var pages = AppStore.getPages()
+	componentWillReceiveProps(props){
+		/*this.setState( (prev, next) => {
+			l(next)
+		})*/
 		this.setState({
-			pages: pages
+			selected 	: AppStore.getCurrentPage(),
 		})
 	}
 
 	componentDidMount(){
-		AppStore.addChangePageListener(this._onPageChange)
+		//AppStore.addChangePageListener(this._onPageChange)
 	}
 
 	changePage(e){
-		e.preventDefault()
+		/*e.preventDefault()
 		var href = e.target.getAttribute('href');
-		AppActions.changePage(href)
+
+		AppActions.changePage(href, history)*/
 	}
 
 	_onPageChange(){
-		var href = AppStore.getCurrentPage()
-		this.setState({
-			selected: href
+		/*this.setState({
+			selected 	: ''//AppStore.getCurrentPage(),
+		})*/
+		return new Promise( (resolve, reject) => {
+			resolve()
 		})
-
-		l(' changing page')
-		l(href)
 	}
+
+
 
 	render(){
 		var pages = this.state.pages;
+
 
 		return(
 			<div className="LinkMenu"> 
@@ -56,14 +63,14 @@ class LinkMenu extends React.Component{
 
 				<ul>
 					{
-						pages.map((page, i) => {
+						pages && pages.map((page, i) => {
 							var className = 'LinkMenu__link'
 							var selectedClassName = (page.href == this.state.selected) ? 'LinkMenu__link--selected' : ''
 							className += ` ${selectedClassName}`
 						
 							return (
 								<li key={i}>
-									<a href={page.href} key={i} onClick={this.changePage} className={className}> {page.name} </a>
+									<DelayLink to={page.href} key={i} onClick={this.changePage} className={className}> {page.name} </DelayLink>
 								</li>
 							)
 						})

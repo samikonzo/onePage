@@ -7,8 +7,8 @@ class StatusWindow extends React.Component{
 		return(
 			<div>
 				StatusWindow
-				<PageCounter />
-				<LinkMenu handlePageChange={this.props.handlePageChange}/>
+				<PageCounter pages={this.props.pages}/>
+				<LinkMenu pages={this.props.pages}/>
 			</div>
 		)
 	}

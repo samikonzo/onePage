@@ -11,8 +11,8 @@ ReactDOM.render(
 	</HashRouter>,
 	document.getElementById('app')
 )
-*/
 
+*/
 
 
 ReactDOM.render(

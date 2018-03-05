@@ -7,12 +7,13 @@ function l(){
 }
 
 const AppActions = {
-	changePage(href){
-		l('changing page')
+	changePage(href, historyObj){
+		//l('changing page')
 
 		Dispatcher.dispatch({
-			type: Constants.CHANGE_PAGE,
-			href: href,
+			type 		: Constants.CHANGE_PAGE,
+			href 		: href,
+			historyObj	: historyObj
 		})
 	}
 }

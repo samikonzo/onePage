@@ -12,71 +12,57 @@ import AppActions from '../actions/AppActions.js'
 import './App.less'
 import './etc/uprise.less'
 
-const l = console.log
+function l(){
+	console.log('App.jsx :', ...arguments)
+}
 
 class App extends React.Component{
 	constructor(props){
 		super(props)
 
-		this.handlePageChange = this.handlePageChange.bind(this)
-	}
-
-	handlePageChange(href){
-		l('href : ', href)
-		//	get current open page
-
-		//	check handleRemove
-
-		/*// return handleRemove Promise or return new Promise
-		return new Promise( (resolve, reject) => {
-			resolve()
-		})*/
-	}
-
-	/*closeCurrent(){
-		l(this.currentOpen)
-		
-		// if there is handleRemove Promise inside component
-		// else new Promise with default opacity changing
-		if(this.currentOpen.handleRemove){
-			return this.currentOpen.handleRemove()
-
-		} else {
-			return new Promise((resolve, reject) => {
-				var elem = this.currentOpen.elem
-
-				if(!elem) resolve()
-
-				elem.style.transition = '1s'
-				elem.style.opacity = 1
-				elem.style.filter = 'blur(0px)'
-
-				setTimeout(function f(){
-					if(elem.style.transition != '1s'){
-						setTimeout(f, 100)
-						return
-					}
-
-					elem.style.opacity = 0;
-					elem.style.filter = 'blur(5px)'
-
-					setTimeout(	resolve, 1000 )
-				},100)
-			})
+		this.state = {
+			pages : [],
 		}
+
+		this._onPageChange = this._onPageChange.bind(this)
+		//this._popState = this._popState.bind(this)
+	}
+
+	componentWillMount(){
+		var pages = AppStore.getPages()
+		this.setState({
+			pages: pages
+		})
+	}
+
+
+	componentDidMount(){
+		//AppStore.addChangePageListener(this._onPageChange)
+		//window.onpopstate = this._popState;
+	}
+
+	/*_popState(e){
+		e.preventDefault()
+		l('_popState')
+		l(e)
 	}*/
 
-
+	_onPageChange(){
+		//var href = AppStore.getCurrentPage()
+		//l(' changing page')
+		//l(href)
+		/*return new Promise((resolve, reject) => {
+			
+			resolve('App.jsx ready')
+		})*/
+	}
 
 
 	render(){
 		return(
 			<div>
-				<StatusWindow 
-					handlePageChange={this.handlePageChange}
-				/>
-
-				<ContentBox />
+				<StatusWindow pages={this.state.pages}/>
+				<ContentBox pages={this.state.pages}/>
 			</div>
 		)
 	}

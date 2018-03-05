@@ -9,6 +9,11 @@ class Items extends React.Component{
 		this.handleRemove = this.handleRemove.bind(this)
 	}
 
+	componentWillMount(){
+
+	}
+
+
 	handleRemove(){
 		return new Promise( (resolve, reject) => {
 			l('Items : handleRemove emited')
