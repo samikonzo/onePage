@@ -48,7 +48,7 @@ function Uprise(){
 		})
 
 		return new Promise( (resolve, reject) => {
-			setTimeout(resolve, duration + maxDelay)
+			setTimeout(resolve, duration/2 + maxDelay)
 		})
 	}
 

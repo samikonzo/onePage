@@ -3,6 +3,7 @@ import React from 'react'
 //	components
 import StatusWindow from './StatusWindow/StatusWindow.jsx'
 import ContentBox from './ContentBox/ContentBox.jsx'
+import DelayLink from './DelayLink.jsx'
 
 //	flux 
 import AppStore from '../stores/AppStore.js'
@@ -23,9 +24,6 @@ class App extends React.Component{
 		this.state = {
 			pages : [],
 		}
-
-		this._onPageChange = this._onPageChange.bind(this)
-		//this._popState = this._popState.bind(this)
 	}
 
 	componentWillMount(){
@@ -37,24 +35,47 @@ class App extends React.Component{
 
 
 	componentDidMount(){
-		//AppStore.addChangePageListener(this._onPageChange)
-		//window.onpopstate = this._popState;
-	}
+		document.addEventListener('wheel', e => {
+			//.context.router.history
+			/*l(this.historyGrabbElement !== undefined)
+			l(this.historyGrabbElement.context !== undefined)
+			l(this.historyGrabbElement.context.router !== undefined)
+			l(this.historyGrabbElement.context.router.history !== undefined)*/
 
-	/*_popState(e){
-		e.preventDefault()
-		l('_popState')
-		l(e)
-	}*/
+			this.historyObj = 	this.historyGrabbElement && 			
+									this.historyGrabbElement.context &&
+										this.historyGrabbElement.context.router &&
+											this.historyGrabbElement.context.router.history;
 
-	_onPageChange(){
-		//var href = AppStore.getCurrentPage()
-		//l(' changing page')
-		//l(href)
-		/*return new Promise((resolve, reject) => {
-			
-			resolve('App.jsx ready')
-		})*/
+
+			if(this.wheelBusy == true) return
+
+
+
+			if(this.wheelWaiter == undefined){
+				this.wheelWaiter = 0
+			}
+
+			this.wheelWaiter += e.deltaY
+
+			if(this.wheelWaiter >= 300){
+				AppActions.nextPage(this.historyObj)
+				this.wheelBusy = true
+
+				delete this.wheelWaiter
+			}
+			if(this.wheelWaiter <= -300){
+				AppActions.previousPage(this.historyObj)
+				this.wheelBusy = true
+
+				delete this.wheelWaiter
+			}
+
+			setTimeout(() => {
+				delete this.wheelWaiter
+				this.wheelBusy = false
+			}, 1000)
+		})
 	}
 
 
@@ -63,6 +84,7 @@ class App extends React.Component{
 			<div>
 				<StatusWindow pages={this.state.pages}/>
 				<ContentBox pages={this.state.pages}/>
+				<DelayLink to="" ref={link => this.historyGrabbElement = link}/>
 			</div>
 		)
 	}

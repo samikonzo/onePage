@@ -17,39 +17,20 @@ class LinkMenu extends React.Component{
 			selected 	: AppStore.getCurrentPage(),
 			pages 		: this.props.pages
 		}
-
-		this.changePage = this.changePage.bind(this) 
-		this._onPageChange = this._onPageChange.bind(this)
 	}
 
-	componentWillReceiveProps(props){
-		/*this.setState( (prev, next) => {
-			l(next)
-		})*/
+	componentDidMount(){
 		this.setState({
 			selected 	: AppStore.getCurrentPage(),
 		})
 	}
 
-	componentDidMount(){
-		//AppStore.addChangePageListener(this._onPageChange)
-	}
-
-	changePage(e){
-		/*e.preventDefault()
-		var href = e.target.getAttribute('href');
-
-		AppActions.changePage(href, history)*/
-	}
-
-	_onPageChange(){
-		/*this.setState({
-			selected 	: ''//AppStore.getCurrentPage(),
-		})*/
-		return new Promise( (resolve, reject) => {
-			resolve()
+	componentWillReceiveProps(props){
+		this.setState({
+			selected 	: AppStore.getCurrentPage(),
 		})
 	}
+
 
 
 

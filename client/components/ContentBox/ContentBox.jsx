@@ -26,9 +26,6 @@ class ContentBox extends React.Component{
 
 		this._hideContent		= this._hideContent.bind(this)
 		this._showContent		= this._showContent.bind(this)
-		this._addToRunAfterShow = this._addToRunAfterShow.bind(this)
-		this._emitRunAfterShow 	= this._emitRunAfterShow.bind(this)
-		this._removeFromRunAfterShow = this._removeFromRunAfterShow.bind(this)
 	}
 
 	componentWillMount(){
@@ -52,12 +49,11 @@ class ContentBox extends React.Component{
 	_hideContent(){
 		var transitionTime = +getComputedStyle(this.elem).transitionDuration.match(/\d+(\.\d+)?/)[0]
 		transitionTime *= 1000
-		
 
-		/*this.setState({
+		this.setState({
 			show: false
-		})*/
-
+		})
+		
 		return new Promise( (resolve, reject) => {
 			setTimeout(() => {
 				resolve('ContentBox : hidded')
@@ -69,45 +65,7 @@ class ContentBox extends React.Component{
 		this.setState({
 			show: true
 		})
-
-		/*var transitionTime = +getComputedStyle(this.elem).transitionDuration.match(/\d+(\.\d+)?/)[0]
-		transitionTime *= 1000
-
-		setTimeout(() => {
-			this._emitRunAfterShow()
-		}, transitionTime)*/
 	}
-
-	_addToRunAfterShow(f){
-		//this.runAfterShow.push(f)
-		var runners = this.state.runAfterShow
-		runners.push(f)
-		this.setState({
-			runAfterShow: runners
-		})
-
-		//l(this.state.runAfterShow)
-	}
-
-	_removeFromRunAfterShow(f){
-		var runners = this.state.runAfterShow
-		var cleanRunners = []
-		runners.forEach( runner => {
-			if(runner != f) cleanRunners.push(runner)
-		})
-
-		this.setState({
-			runAfterShow: cleanRunners
-		})
-	}
-
-	_emitRunAfterShow(){
-		var runners = this.state.runAfterShow
-		runners.forEach(f => {
-			f()
-		})
-	}
-
 
 	render(){
 		var className = "ContentBox"
@@ -121,8 +79,6 @@ class ContentBox extends React.Component{
 							return (
 								<Home {...props} 
 									ref={item => this.currentOpen = item} 
-									addRunner={this._addToRunAfterShow}
-									removeRunner={this._removeFromRunAfterShow}
 								/>
 							)
 						}
@@ -132,8 +88,6 @@ class ContentBox extends React.Component{
 							return (
 								<Items {...props} 
 									ref={item => this.currentOpen = item} 
-									addRunner={this._addToRunAfterShow}
-									removeRunner={this._removeFromRunAfterShow}
 								/>
 							)
 						}
@@ -143,8 +97,6 @@ class ContentBox extends React.Component{
 							return (
 								<Contacts {...props} 
 									ref={item => this.currentOpen = item} 
-									addRunner={this._addToRunAfterShow}
-									removeRunner={this._removeFromRunAfterShow}
 								/>
 							)
 						}

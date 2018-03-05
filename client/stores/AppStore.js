@@ -34,7 +34,8 @@ const EVENTS = {
 
 
 
-let _currentPage
+let _currentPageHref
+let _currentPageNum
 let _historyObj
 
 
@@ -46,72 +47,77 @@ const AppStore = Object.assign({}, EventEmitter.prototype,{
 
 	// History
 
-	emitHistoryChange(){
-		LOGGED && l('Change history')
-		_historyObj.push(_currentPage)
-		this.emit(EVENTS.CHANGE_HISTORY)
-	},
-	addChangeHistoryListener(f){
-		this.on(EVENTS.CHANGE_HISTORY, f)
-	},
-	removeChangeHistoryListener(f){
-		this.removeListener(EVENTS.CHANGE_HISTORY, f)
-	},
+		emitHistoryChange(){
+			LOGGED && l('Change history')
+			_historyObj.push(_currentPageHref)
+
+			this.getCurrentPageNum() // just for change pagenum in storage
+
+			this.emit(EVENTS.CHANGE_HISTORY)
+		},
+		addChangeHistoryListener(f){
+			this.on(EVENTS.CHANGE_HISTORY, f)
+		},
+		removeChangeHistoryListener(f){
+			this.removeListener(EVENTS.CHANGE_HISTORY, f)
+		},
 
 	//////////////////////////
 
 
 	// Pages
-	emitChangePage(){
-		
-		//this.emit(EVENTS.CHANGE_PAGE)
+		emitChangePage(){
+			var funcs = AppStore.listeners(EVENTS.CHANGE_PAGE)
+			var count = funcs.length
+			var countReady = 0;
 
-		var funcs = AppStore.listeners(EVENTS.CHANGE_PAGE)
-		var count = funcs.length
-		var countReady = 0;
+			LOGGED && l(funcs)
 
+			funcs.forEach( f => {
+				f().then(
+					(msg)=>{
 
-		LOGGED && l(funcs)
+						LOGGED && l('msg : ', msg)
 
+						countReady++
+						if(checkAllReady()) this.emitHistoryChange()
+					})
+			})
 
-		funcs.forEach( f => {
-			f().then(
-				(msg)=>{
-					LOGGED && l('msg : ', msg)
-					countReady++
-					if(checkAllReady()) this.emitHistoryChange()
-				})
-		})
+			function checkAllReady(){
 
-		function checkAllReady(){
-			LOGGED && l('All ready : ', count == countReady)
-			return count == countReady
+				LOGGED && l('All ready : ', count == countReady)
+
+				return count == countReady
+			}
+		},
+
+		addChangePageListener(f){
+			this.on(EVENTS.CHANGE_PAGE, f)
+		},
+
+		removeChangePageListener(f){
+			this.removeListener(EVENTS.CHANGE_PAGE, f)
+		},
+
+		getCurrentPage(){
+			if(!_currentPageHref){
+				_currentPageHref = location.href.split(location.host)[1]
+			}
+			return _currentPageHref
+		},
+
+		getCurrentPageNum(){
+			PAGES.forEach( (page, i) => {
+				if(page.href == _currentPageHref) _currentPageNum = i
+			})
+
+			return _currentPageNum
+		},
+
+		getPages(){
+			return PAGES
 		}
-
-		/*function changeHistory(){
-			LOGGED && l('Change history')
-			_historyObj.push(_currentPage)
-		}*/
-	},
-
-	addChangePageListener(f){
-		this.on(EVENTS.CHANGE_PAGE, f)
-	},
-
-	removeChangePageListener(f){
-		this.removeListener(EVENTS.CHANGE_PAGE, f)
-	},
-
-	getCurrentPage(){
-		if(!_currentPage){
-			_currentPage = location.href.split(location.host)[1]
-		}
-		return _currentPage
-	},
-
-	getPages(){
-		return PAGES
-	}
 
 	//////////////////////////
 })
@@ -122,16 +128,55 @@ Dispatcher.register(function(action){
 		case Constants.CHANGE_PAGE : {
 
 			// check redirect to current page
-			//l(_currentPage, ' : ', action.href)
-			if(_currentPage == action.href){
+			if(_currentPageHref == action.href){
 				return
 			}
-
-			//l(action)
-
-			_currentPage = action.href
+			_currentPageHref = action.href
 			if(action.historyObj) _historyObj = action.historyObj
 
+			AppStore.emitChangePage()
+			break;
+		}
+
+		case Constants.NEXT_PAGE : {
+			AppStore.getCurrentPageNum()
+			
+			if(!_historyObj){
+				_historyObj = action.historyObj
+			}
+			
+			var nextPageNum = _currentPageNum + 1;
+			if(nextPageNum > PAGES.length - 1) return
+
+			l('NEXT_PAGE!')
+			//l('_currentPageHref : ', _currentPageHref)
+			//l('_currentPageNum : ', _currentPageNum)
+			//l('_historyObj : ', _historyObj)
+
+			_currentPageHref = PAGES[nextPageNum].href
+			AppStore.emitChangePage()
+
+
+			break;
+		}
+
+		case Constants.PREVIOUS_PAGE : {
+			AppStore.getCurrentPageNum()
+			
+			if(!_historyObj){
+				_historyObj = action.historyObj
+			}
+
+
+			var previousPageNum = _currentPageNum - 1;
+			if(previousPageNum < 0 ) return
+
+			l('PREVIOUS_PAGE')
+			//l('_currentPageHref : ', _currentPageHref)
+			//l('_currentPageNum : ', _currentPageNum)
+			//l('_historyObj : ', _historyObj)
+
+			_currentPageHref = PAGES[previousPageNum].href
 			AppStore.emitChangePage()
 			break;
 		}

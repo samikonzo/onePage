@@ -33,10 +33,11 @@ class Home extends React.Component{
 	}
 
 	_hideContent(){
-		return this.uprise.hide()
-		/*return new Promise( (resolve, reject) => {
-			setTimeout(resolve, 3000)
-		})*/
+		//return this.uprise.hide()
+		this.uprise.hide()
+		return new Promise( (resolve, reject) => {
+			resolve()
+		})
 	}
 
 	_showContent(){
@@ -56,11 +57,11 @@ class Home extends React.Component{
 				</header>
 
 				<main className="uprise--up uprise--delay2 uprise--hidden">
-			 		<p className="uprise--right uprise--delay6 uprise--hidden">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, iure? </p>
+			 		<p className="uprise--right uprise--delay4 uprise--hidden">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, iure? </p>
 				</main>
 
 				<footer className="uprise--up uprise--delay1 uprise--hidden" >  
-					some foot here! 
+					<p className="uprise--right uprise--delay5 uprise--hidden"> some foot here! </p>
 				</footer>
 				
 				<DelayLink to="/items" className="uprise--hidden uprise--delay3"> Items </DelayLink>
