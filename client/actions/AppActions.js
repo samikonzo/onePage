@@ -29,6 +29,12 @@ const AppActions = {
 			type		: Constants.PREVIOUS_PAGE,
 			historyObj 	: historyObj
 		})
+	},
+
+	popstate(){
+		Dispatcher.dispatch({
+			type : Constants.POP_STATE
+		})
 	}
 }
 

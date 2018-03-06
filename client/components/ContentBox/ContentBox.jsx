@@ -1,7 +1,8 @@
 //	main imports
 import React 				from 'react'
 import { Switch, Route } 	from 'react-router-dom'
-import AppStore 			from '../../stores/AppStore.js'
+import PageStore			from '../../stores/PageStore.js'
+
 
 //	style
 import './ContentBox.less'
@@ -24,16 +25,16 @@ class ContentBox extends React.Component{
 			runAfterShow : [],
 		}
 
-		this._hideContent		= this._hideContent.bind(this)
-		this._showContent		= this._showContent.bind(this)
+		this._hideContent = this._hideContent.bind(this)
+		this._showContent = this._showContent.bind(this)
 	}
 
 	componentWillMount(){
 	}
 
 	componentDidMount(){
-		AppStore.addChangePageListener(this._hideContent)
-		AppStore.addChangeHistoryListener(this._showContent)
+		PageStore.addPageChangeListener(this._hideContent)
+		PageStore.addHistoryChangeListener(this._showContent)
 
 		setTimeout(() => {
 			this._showContent()
@@ -41,8 +42,8 @@ class ContentBox extends React.Component{
 	}
 
 	componentWillUnmount(){
-		AppStore.removeChangePageListener(this._hideContent)
-		AppStore.removeChangeHistoryListener(this._showContent)
+		PageStore.removePageChangeListener(this._hideContent)
+		PageStore.removeHistoryChangeListener(this._showContent)
 	}
 
 

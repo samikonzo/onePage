@@ -2,20 +2,24 @@ import React from 'react'
 
 //	components
 import StatusWindow from './StatusWindow/StatusWindow.jsx'
-import ContentBox from './ContentBox/ContentBox.jsx'
-import DelayLink from './DelayLink.jsx'
+import ContentBox 	from './ContentBox/ContentBox.jsx'
+import DelayLink 	from './DelayLink.jsx'
 
 //	flux 
-import AppStore from '../stores/AppStore.js'
-import AppActions from '../actions/AppActions.js'
+import AppActions 	from '../actions/AppActions.js'
+import AppStore 	from '../stores/AppStore.js'
+import PageStore 	from '../stores/PageStore.js'
 
 // 	style
 import './App.less'
 import './etc/uprise.less'
 
-function l(){
+/*function l(){
 	console.log('App.jsx :', ...arguments)
-}
+}*/
+
+global.l = console.log
+
 
 class App extends React.Component{
 	constructor(props){
@@ -35,22 +39,31 @@ class App extends React.Component{
 
 
 	componentDidMount(){
-		document.addEventListener('wheel', e => {
-			//.context.router.history
-			/*l(this.historyGrabbElement !== undefined)
-			l(this.historyGrabbElement.context !== undefined)
-			l(this.historyGrabbElement.context.router !== undefined)
-			l(this.historyGrabbElement.context.router.history !== undefined)*/
+		this.historyObj = 	this.historyGrabbElement && 			
+								this.historyGrabbElement.context &&
+									this.historyGrabbElement.context.router &&
+										this.historyGrabbElement.context.router.history;
 
-			this.historyObj = 	this.historyGrabbElement && 			
-									this.historyGrabbElement.context &&
-										this.historyGrabbElement.context.router &&
-											this.historyGrabbElement.context.router.history;
+		//if(this.historyObj !== undefined) 
+		PageStore.addHistoryObj(this.historyObj)
+
+
+
+
+		// bind mwheel to page change
+		document.addEventListener('wheel', e => {
+			/*
+				wheelBusy prevent page changing
+				wheelBusy == true after mwheel event for 1s
+				wheelWaiter - sum of deltaY at last 1s
+			*/
+
+			var deltaYForPrevious = -100
+			var deltaYForNext = 100
+			var resetTime = 1000
 
 
 			if(this.wheelBusy == true) return
-
-
 
 			if(this.wheelWaiter == undefined){
 				this.wheelWaiter = 0
@@ -58,13 +71,16 @@ class App extends React.Component{
 
 			this.wheelWaiter += e.deltaY
 
-			if(this.wheelWaiter >= 300){
+
+			if(this.wheelWaiter >= deltaYForNext){
 				AppActions.nextPage(this.historyObj)
 				this.wheelBusy = true
 
 				delete this.wheelWaiter
 			}
-			if(this.wheelWaiter <= -300){
+
+
+			if(this.wheelWaiter <= deltaYForPrevious){
 				AppActions.previousPage(this.historyObj)
 				this.wheelBusy = true
 
@@ -74,7 +90,11 @@ class App extends React.Component{
 			setTimeout(() => {
 				delete this.wheelWaiter
 				this.wheelBusy = false
-			}, 1000)
+			}, resetTime)
+		})
+
+		window.addEventListener('popstate', e => {
+			AppActions.popstate()
 		})
 	}
 
@@ -82,8 +102,9 @@ class App extends React.Component{
 	render(){
 		return(
 			<div>
-				<StatusWindow pages={this.state.pages}/>
-				<ContentBox pages={this.state.pages}/>
+				<StatusWindow />
+				<ContentBox />
+
 				<DelayLink to="" ref={link => this.historyGrabbElement = link}/>
 			</div>
 		)

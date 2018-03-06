@@ -3,9 +3,7 @@ import Dispatcher from '../dispatcher/AppDispatcher.js'
 import Constants from '../constants/AppConstants.js'
 import { Link } from 'react-router-dom'
 
-/*const l = function(){
-	console.log('AppStore : ', ...arguments)
-}*/
+
 
 var l = console.log
 
@@ -121,7 +119,7 @@ const AppStore = Object.assign({}, EventEmitter.prototype,{
 
 	//////////////////////////
 })
-
+/*
 
 Dispatcher.register(function(action){
 	switch(action.type){
@@ -141,7 +139,7 @@ Dispatcher.register(function(action){
 		case Constants.NEXT_PAGE : {
 			AppStore.getCurrentPageNum()
 			
-			if(!_historyObj){
+			if(!_historyObj && action.historyObj){
 				_historyObj = action.historyObj
 			}
 			
@@ -182,6 +180,6 @@ Dispatcher.register(function(action){
 		}
 	}
 })
-
+*/
 
 export default AppStore

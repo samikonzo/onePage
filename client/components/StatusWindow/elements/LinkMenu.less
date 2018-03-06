@@ -1,0 +1,45 @@
+.LinkMenu{
+	position: absolute;
+	z-index: 10;
+	max-width: 400px;
+	width: 100%;
+
+	& ul{
+		list-style-type: none;
+
+		& li{
+			position: relative;
+			height: 40px;
+			line-height: 40px;
+			flex: 1 1 auto;
+		}
+	}
+
+	&--hidden{
+		display: none;
+	}
+}
+
+.LinkMenu__link{
+	display: block;
+	color: grey;
+	border: 1px solid transparent;
+	text-align: center;
+	text-decoration: none;
+	transition: 1s;
+
+	&:hover{
+		background: lighten(lightgrey, 13%);
+	}
+}
+
+.LinkMenu__link--selected{
+	color: black;
+	background: lighten(lightgrey, 15%);
+	border-top: 1px solid lightgrey;
+	border-bottom: 1px solid lightgrey;
+
+	&:hover{
+		cursor: default;
+	}
+}
