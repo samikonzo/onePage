@@ -15,6 +15,26 @@ const AppActions = {
 			href 		: href,
 			historyObj	: historyObj
 		})
+	},
+
+	nextPage(historyObj){
+		Dispatcher.dispatch({
+			type		: Constants.NEXT_PAGE,
+			historyObj 	: historyObj
+		})
+	},
+
+	previousPage(historyObj){
+		Dispatcher.dispatch({
+			type		: Constants.PREVIOUS_PAGE,
+			historyObj 	: historyObj
+		})
+	},
+
+	popstate(){
+		Dispatcher.dispatch({
+			type : Constants.POP_STATE
+		})
 	}
 }
 

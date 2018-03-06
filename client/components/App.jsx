@@ -2,19 +2,24 @@ import React from 'react'
 
 //	components
 import StatusWindow from './StatusWindow/StatusWindow.jsx'
-import ContentBox from './ContentBox/ContentBox.jsx'
+import ContentBox 	from './ContentBox/ContentBox.jsx'
+import DelayLink 	from './DelayLink.jsx'
 
 //	flux 
-import AppStore from '../stores/AppStore.js'
-import AppActions from '../actions/AppActions.js'
+import AppActions 	from '../actions/AppActions.js'
+import AppStore 	from '../stores/AppStore.js'
+import PageStore 	from '../stores/PageStore.js'
 
 // 	style
 import './App.less'
 import './etc/uprise.less'
 
-function l(){
+/*function l(){
 	console.log('App.jsx :', ...arguments)
-}
+}*/
+
+global.l = console.log
+
 
 class App extends React.Component{
 	constructor(props){
@@ -23,9 +28,6 @@ class App extends React.Component{
 		this.state = {
 			pages : [],
 		}
-
-		this._onPageChange = this._onPageChange.bind(this)
-		//this._popState = this._popState.bind(this)
 	}
 
 	componentWillMount(){
@@ -37,32 +39,73 @@ class App extends React.Component{
 
 
 	componentDidMount(){
-		//AppStore.addChangePageListener(this._onPageChange)
-		//window.onpopstate = this._popState;
-	}
+		this.historyObj = 	this.historyGrabbElement && 			
+								this.historyGrabbElement.context &&
+									this.historyGrabbElement.context.router &&
+										this.historyGrabbElement.context.router.history;
 
-	/*_popState(e){
-		e.preventDefault()
-		l('_popState')
-		l(e)
-	}*/
+		//if(this.historyObj !== undefined) 
+		PageStore.addHistoryObj(this.historyObj)
 
-	_onPageChange(){
-		//var href = AppStore.getCurrentPage()
-		//l(' changing page')
-		//l(href)
-		/*return new Promise((resolve, reject) => {
-			
-			resolve('App.jsx ready')
-		})*/
+
+
+
+		// bind mwheel to page change
+		document.addEventListener('wheel', e => {
+			/*
+				wheelBusy prevent page changing
+				wheelBusy == true after mwheel event for 1s
+				wheelWaiter - sum of deltaY at last 1s
+			*/
+
+			var deltaYForPrevious = -100
+			var deltaYForNext = 100
+			var resetTime = 1000
+
+
+			if(this.wheelBusy == true) return
+
+			if(this.wheelWaiter == undefined){
+				this.wheelWaiter = 0
+			}
+
+			this.wheelWaiter += e.deltaY
+
+
+			if(this.wheelWaiter >= deltaYForNext){
+				AppActions.nextPage(this.historyObj)
+				this.wheelBusy = true
+
+				delete this.wheelWaiter
+			}
+
+
+			if(this.wheelWaiter <= deltaYForPrevious){
+				AppActions.previousPage(this.historyObj)
+				this.wheelBusy = true
+
+				delete this.wheelWaiter
+			}
+
+			setTimeout(() => {
+				delete this.wheelWaiter
+				this.wheelBusy = false
+			}, resetTime)
+		})
+
+		window.addEventListener('popstate', e => {
+			AppActions.popstate()
+		})
 	}
 
 
 	render(){
 		return(
 			<div>
-				<StatusWindow pages={this.state.pages}/>
-				<ContentBox pages={this.state.pages}/>
+				<StatusWindow />
+				<ContentBox />
+
+				<DelayLink to="" ref={link => this.historyGrabbElement = link}/>
 			</div>
 		)
 	}
