@@ -2,7 +2,8 @@
 	Component DelayLink from
 	https://gist.github.com/headzoo/8f4c6a5e843ec26abdcad87cd93e3e2e
 
-	hard modification
+	modificated
+	no delay here, just redirect request to Flux
 */
 
 
