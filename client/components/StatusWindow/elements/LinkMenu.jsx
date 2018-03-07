@@ -1,12 +1,11 @@
 import React from 'react'
+import LinkMenuList from './LinkMenuList.jsx'
 import './LinkMenu.less'
 
 class LinkMenu extends React.Component{
 	constructor(props){
 		super(props)
 
-		//visibility
-		//hendleToggleVisibility
 	}
 
 
@@ -18,16 +17,24 @@ class LinkMenu extends React.Component{
 		var pages = this.props.pages
 		var selected = this.props.currentPageHref
 
-		var className = "LinkMenu"
-		var hiddenClassName = this.props.visibility ? '' : ' LinkMenu--hidden'
-		className += hiddenClassName
-
+		/*var menuClass = "LinkMenu__menu"
+		var menuHiddenClass = this.props.visibility ? '' : ' LinkMenu__menu--hidden'
+		menuClass += menuHiddenClass*/
+		var menuBtnTextCloseClass =  this.props.visibility ? 'LinkMenu__close-txt' : 'LinkMenu__close-txt LinkMenu__close-txt--hidden'
+		var menuBtnTextOpenClass = this.props.visibility ? 'LinkMenu__open-txt LinkMenu__open-txt--hidden' : 'LinkMenu__open-txt'
 
 		return(
-			<div className={className}> 
-				<div className="LinkMenu__tglVsblBtn" onClick={this.props.handleToggleMenuVisibility}> open / close </div>
+			<div className="LinkMenu"> 
+				<div className="LinkMenu__tglVsblBtn" onClick={this.props.handleToggleMenuVisibility}> 
+					Menu
+					<span className={menuBtnTextCloseClass}> Close </span> 
+					<span className={menuBtnTextOpenClass}> Open </span>
+				</div>
 
-				<ul>
+				<LinkMenuList {...this.props} show={this.props.visibility} pages={pages}/>
+				
+
+				{/*<ul className={menuClass}>
 					{
 						pages && pages.map( (page, i) => {
 							var className = 'LinkMenu__link'
@@ -46,7 +53,7 @@ class LinkMenu extends React.Component{
 							)
 						})
 					}
-				</ul>
+				</ul>*/}
 			</div>
 		)
 	}

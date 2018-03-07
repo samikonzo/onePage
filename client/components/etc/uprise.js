@@ -1,29 +1,67 @@
-var LOGGED = 0
+var LOGGED = 1
 function l(){
 	LOGGED && console.log('UPRISE : ', ...arguments)	
 }
 
-function Uprise(){
-	//find
-	var uprises = document.querySelectorAll('[class*="uprise"]')
-	var duration = getComputedStyle(uprises[0]).transitionDuration.match(/\d+(\.\d+)?/)[0]*1000;
-	var maxDelay = 0
+function Uprise(element){
+	if(element === undefined) element = document
 
-	l('duration : ',duration)
+
+	var uprises 
+	var duration
+	var maxDelay
+	var showed = false
+
+	//find
+
+	find()
+
+	function find(){
+		uprises = element.querySelectorAll('[class*="uprise"]')
+
+		l(uprises)
+
+		if(uprises.length){
+			duration = getComputedStyle(uprises[0]).transitionDuration.match(/\d+(\.\d+)?/)[0]*1000;
+			maxDelay = 0
+
+			l('duration : ',duration)
+
+
+			return true
+		} else {
+			noUprise();
+
+			return false
+		}
+	}
+
+
+	
 
 	//show
 	function show(){
+		if(!uprises.length){
+
+			if( find() ) show()
+			else noUprise()
+				
+			return
+		}
+
 		uprises.forEach(uprise => {
-			uprise.timer = 0
+			//uprise.timer = 0
 			uprise.upriseClassList = [].slice.call(uprise.classList)
 
 			uprise.classList.forEach( className => {
 				var num = className.split('delay')[1]
+
 				if(num){
 					uprise.delayTimer = num * 200
 					if(uprise.delayTimer > maxDelay) maxDelay = uprise.delayTimer
 					l(className, ' : ', num, '   |  uprise.delayTimer : ', uprise.delayTimer)
 				}
+
 			});
 		
 			setTimeout(() => {
@@ -35,10 +73,21 @@ function Uprise(){
 				//l(uprise)
 			}, uprise.delayTimer)
 		})
+
+		// change state
+		showed = true
 	}
 
 	//hide
 	function hide(){
+		if(!uprises.length){
+
+			if( find() ) show()
+			else noUprise()
+				
+			return
+		}
+
 		uprises.forEach(uprise => {
 			//l(uprise.upriseClassList)
 
@@ -50,11 +99,20 @@ function Uprise(){
 		return new Promise( (resolve, reject) => {
 			setTimeout(resolve, duration/2 + maxDelay)
 		})
+
+		// change state
+		showed = false
+	}
+
+
+	function noUprise(){
+		l('no uprises!')		
 	}
 
 	return {
 		show: show,
-		hide: hide
+		hide: hide,
+		state : showed,
 	}
 }
 

@@ -22,18 +22,15 @@ class Home extends React.Component{
 
 	componentDidMount(){
 		AppStore.addChangePageListener(this._hideContent)
-		this.uprise = Uprise()
-
+		this.uprise = Uprise(this.elem)
 		this._showContent()
 	}
 
 	componentWillUnmount(){
 		AppStore.removeChangePageListener(this._hideContent)
-		//this.props.removeRunner(this._showContent)
 	}
 
 	_hideContent(){
-		//return this.uprise.hide()
 		this.uprise.hide()
 		return new Promise( (resolve, reject) => {
 			resolve()
@@ -41,7 +38,6 @@ class Home extends React.Component{
 	}
 
 	_showContent(){
-		//l(' HOME : Show Content')
 		this.uprise.show()
 	}
 

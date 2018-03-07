@@ -48,8 +48,6 @@ class StatusWindow extends React.Component{
 
 	handleToggleMenuVisibility(e){
 		var prevState = this.state.visibility.LinkMenu
-		
-		l(prevState)
 
 		// check for type
 		this.setState({
@@ -85,6 +83,7 @@ class StatusWindow extends React.Component{
 					LinkMenu
 					PageSlider
 					PageCounter
+					PageChangeVisualizer ( loader )
 					Application? 
 
 				*/}
@@ -96,7 +95,7 @@ class StatusWindow extends React.Component{
 					currentPageHref 		= {this.state.currentPageHref}
 					handleLinkClick 		= {this.handleLinkClick}
 					visibility 				= {this.state.visibility.LinkMenu}
-					handleToggleVisibility 	= {this.handleToggleMenuVisibility}
+					handleToggleMenuVisibility 	= {this.handleToggleMenuVisibility}
 				/> 
 			</div>
 		)
