@@ -102,7 +102,6 @@ class ContentBox extends React.Component{
 							)
 						}
 					}/>
-
 				</Switch>
 			</div>
 		)

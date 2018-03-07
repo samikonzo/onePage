@@ -59,7 +59,7 @@ Dispatcher.register( function(action) {
 		}
 
 		case Constants.POP_STATE : {
-			PageStore.emitPopHistoryChange()
+			PageStore.emitPopStateHistoryChange()
 			break;
 		}
 	}
@@ -122,7 +122,7 @@ const PageStore = Object.assign({}, EventEmitter.prototype, {
 			this.emit(EVENTS.HISTORY_CHANGE)
 		},
 
-		emitPopHistoryChange(){
+		emitPopStateHistoryChange(){
 			_currentPageHref = location.href.split(location.host)[1]
 			this.getCurrentPageNum()
 			

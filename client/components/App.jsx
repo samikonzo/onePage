@@ -5,6 +5,7 @@ import StatusWindow from './StatusWindow/StatusWindow.jsx'
 import ContentBox 	from './ContentBox/ContentBox.jsx'
 import DelayLink 	from './DelayLink.jsx'
 
+
 //	flux 
 import AppActions 	from '../actions/AppActions.js'
 import AppStore 	from '../stores/AppStore.js'
@@ -94,6 +95,7 @@ class App extends React.Component{
 		})
 
 		window.addEventListener('popstate', e => {
+			e.preventDefault()
 			AppActions.popstate()
 		})
 	}
