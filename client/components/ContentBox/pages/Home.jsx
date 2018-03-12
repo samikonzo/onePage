@@ -1,7 +1,7 @@
 import React 		from 'react'
-import DelayLink 	from '../../DelayLink.jsx'
 import Uprise 		from '../../etc/uprise.js'
-import AppStore 	from '../../../stores/AppStore.js'
+import PageStore 	from '../../../stores/PageStore.js'
+import DelayLink 	from '../../etc/DelayLink.jsx'
 import './Home.less'
 
 
@@ -13,7 +13,6 @@ class Home extends React.Component{
 		super(props)
 
 		this.state = {
-
 		}
 
 		this._hideContent = this._hideContent.bind(this)
@@ -21,13 +20,13 @@ class Home extends React.Component{
 	}
 
 	componentDidMount(){
-		AppStore.addChangePageListener(this._hideContent)
+		PageStore.addPageChangeListener(this._hideContent)
 		this.uprise = Uprise(this.elem)
 		this._showContent()
 	}
 
 	componentWillUnmount(){
-		AppStore.removeChangePageListener(this._hideContent)
+		PageStore.removePageChangeListener(this._hideContent)
 	}
 
 	_hideContent(){
@@ -60,7 +59,7 @@ class Home extends React.Component{
 					<p className="uprise--right uprise--delay5 uprise--length20 uprise--time10"> some foot here! </p>
 				</footer>
 				
-				<DelayLink to="/items" className=" uprise--delay3"> Items </DelayLink>
+				<DelayLink to="/information"> bebebe </DelayLink> 
 			</div>
 		)
 	}

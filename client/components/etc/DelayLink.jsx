@@ -9,7 +9,7 @@
 
 import React from 'react'
 import { Link } from 'react-router-dom'
-import AppActions from '../actions/AppActions.js'
+import AppActions from '../../actions/AppActions.js'
 
 const l = console.log;
 

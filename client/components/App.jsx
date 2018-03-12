@@ -3,7 +3,7 @@ import React from 'react'
 //	components
 import StatusWindow from './StatusWindow/StatusWindow.jsx'
 import ContentBox 	from './ContentBox/ContentBox.jsx'
-import DelayLink 	from './DelayLink.jsx'
+import DelayLink 	from './etc/DelayLink.jsx'
 
 
 //	flux 
@@ -11,13 +11,11 @@ import AppActions 	from '../actions/AppActions.js'
 import AppStore 	from '../stores/AppStore.js'
 import PageStore 	from '../stores/PageStore.js'
 
+
 // 	style
 import './App.less'
 import './etc/uprise.less'
 
-/*function l(){
-	console.log('App.jsx :', ...arguments)
-}*/
 
 global.l = console.log
 
@@ -59,13 +57,22 @@ class App extends React.Component{
 				wheelWaiter - sum of deltaY at last 1s
 			*/
 
-			var deltaYForPrevious = -100
-			var deltaYForNext = 100
+			// if some element in path have wheelBuzy prop => return
+			for( var i = 0; i < e.path.length; i++){
+				var el = e.path[i]
+				if(el.wheelBuzy){
+					return
+				}
+			}
+
+			var deltayForChange = 200
+			var deltaYForPrevious = -deltayForChange
+			var deltaYForNext = deltayForChange
 			var resetTime = 1000
 
 
 			if(this.wheelBusy == true) return
-
+			
 			if(this.wheelWaiter == undefined){
 				this.wheelWaiter = 0
 			}
@@ -76,7 +83,6 @@ class App extends React.Component{
 			if(this.wheelWaiter >= deltaYForNext){
 				AppActions.nextPage(this.historyObj)
 				this.wheelBusy = true
-
 				delete this.wheelWaiter
 			}
 

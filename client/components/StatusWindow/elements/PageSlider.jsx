@@ -13,7 +13,7 @@ class PageSlider extends React.Component{
 			currentPageNum : this.props.currentPageNum,
 		}
 
-		l(this.props)
+		//l(this.props)
 
 		this.handleItemCLick = this.handleItemCLick.bind(this)
 	}
@@ -25,7 +25,7 @@ class PageSlider extends React.Component{
 	}
 
 	handleItemCLick(e){
-		l('item click')
+		//l('item click')
 		this.props.handleItemClick(e)
 	}
 

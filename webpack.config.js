@@ -5,11 +5,13 @@ module.exports = {
 	entry 		: {
 		main : './client/main.jsx'
 	},
+
 	output 		: {
 		path: path.resolve(__dirname, 'public/build'),
 		publicPath 	: 'build/',
 		filename 	:  '[name]-bundle.js'
 	},
+
 	module 		: {
 		rules : [
 
@@ -54,6 +56,7 @@ module.exports = {
 
 		]
 	},
+	
 	devServer 	: {
 		contentBase 		: path.join(__dirname, "public"),
 		watchContentBase	: true,
