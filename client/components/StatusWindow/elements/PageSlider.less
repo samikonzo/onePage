@@ -1,0 +1,41 @@
+.PageSlider{
+	position: absolute;
+	z-index: 2;
+	height: 100%;
+	right: 10px;
+	//border:1px solid;
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+
+	&__slide{
+		position: relative;
+		width: 3px;
+		border: 1px solid darken(#eef0e9, 22%);
+		height: 30px;
+		margin-bottom: 3px;
+		cursor: pointer;
+
+		transition: 1s;
+
+		&::before{
+			content: '';
+			position: absolute;
+			left: -4px;
+			top: 0;
+			width: 10px;
+			height: 100%;
+			//border: 1px solid;
+			//background: lightblue;
+		}
+	}
+
+	&__slide--selected{
+		height: 50px;
+		//border-color: black;
+		background: #e6b790;
+		
+	}
+
+
+}

@@ -1,13 +1,6 @@
 const webpack 	= require('webpack')
 const path 		= require('path')
 
-/*
-	output		path 				: __dirname + '/public/build',
-	output 		publicPath 			: 'build/',
-	devServer 	historyApiFallback	: false
-*/
-
-
 module.exports = {
 	entry 		: {
 		main : './client/main.jsx'

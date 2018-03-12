@@ -2,10 +2,15 @@ import React 		from 'react'
 import AppActions 	from '../../actions/AppActions.js'
 import PageStore 	from '../../stores/PageStore.js'
 
+
 //	components
-import LinkMenu from 		'./elements/LinkMenu.jsx'
-//import PageSlider from 	'./elements/PageSlider.jsx'
-//import PageCounter from 	'./elements/PageCounter.jsx'
+import LinkMenu 	from './elements/LinkMenu.jsx'
+import PageCounter 	from './elements/PageCounter.jsx'
+import PageSlider from 	'./elements/PageSlider.jsx'
+
+
+// style
+import './StatusWindow.less'
 
 
 class StatusWindow extends React.Component{
@@ -15,15 +20,19 @@ class StatusWindow extends React.Component{
 		this.state = { 
 			pages : PageStore.getPages(),
 			currentPageHref : PageStore.getCurrentPageHref(),
+			currentPageNum : PageStore.getCurrentPageNum(),
 			visibility: {
 				LinkMenu : true,
 			}
 		}
 
-		this.handleLinkClick 		= this.handleLinkClick.bind(this)
+		//l(this.state)
+
+
+		this.handleLinkClick 			= this.handleLinkClick.bind(this)
 		this.handleToggleMenuVisibility = this.handleToggleMenuVisibility.bind(this)
-		this.deselectCurrent		= this.deselectCurrent.bind(this)
-		this.onHistoryChange 		= this.onHistoryChange.bind(this)
+		this.deselectCurrent			= this.deselectCurrent.bind(this)
+		this.onHistoryChange 			= this.onHistoryChange.bind(this)
 	}
 
 	componentDidMount(){
@@ -31,7 +40,8 @@ class StatusWindow extends React.Component{
 		PageStore.addHistoryChangeListener(this.onHistoryChange)
 
 		this.setState({
-			currentPageHref: PageStore.getCurrentPageHref()
+			currentPageHref: PageStore.getCurrentPageHref(),
+
 		})
 	}
 
@@ -39,7 +49,6 @@ class StatusWindow extends React.Component{
 		PageStore.removePageChangeListener(this.deselectCurrent)
 		PageStore.removeHistoryChangeListener(this.onHistoryChange)
 	}
-
 
 	handleLinkClick(e){
 		var href = e.target.getAttribute('href')
@@ -60,8 +69,11 @@ class StatusWindow extends React.Component{
 
 	deselectCurrent(){
 		this.setState({
-			currentPageHref: null
+			currentPageHref: null,
+			currentPageNum: null
 		})
+
+
 
 		return new Promise((resolve, reject) => {
 			resolve()
@@ -70,14 +82,15 @@ class StatusWindow extends React.Component{
 
 	onHistoryChange(){
 		this.setState({
-			currentPageHref: PageStore.getCurrentPageHref()
+			currentPageHref: PageStore.getCurrentPageHref(),
+			currentPageNum : PageStore.getCurrentPageNum()
 		})
 	}
 
 	render(){
 		return(
-			<div>
-				StatusWindow
+			<div className="StatusWindow">
+				
 				{/*
 					
 					LinkMenu
@@ -91,12 +104,20 @@ class StatusWindow extends React.Component{
 				
 
 				<LinkMenu 
-					pages 					= {this.state.pages} 
-					currentPageHref 		= {this.state.currentPageHref}
-					handleLinkClick 		= {this.handleLinkClick}
-					visibility 				= {this.state.visibility.LinkMenu}
+					{...this.state}
+					visibility 					= {this.state.visibility.LinkMenu}
+					handleLinkClick 			= {this.handleLinkClick}
 					handleToggleMenuVisibility 	= {this.handleToggleMenuVisibility}
 				/> 
+
+				<PageCounter 
+					{...this.state}
+				/>
+
+				<PageSlider 
+					{...this.state}
+					handleItemClick = {this.handleLinkClick}
+				/>
 			</div>
 		)
 	}

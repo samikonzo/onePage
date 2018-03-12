@@ -1,0 +1,41 @@
+.PageCounter{
+	width: 50px;
+	height: 50px;
+	line-height: 25px;
+	//border: 1px solid;
+	text-align: center;
+	/* overflow: hidden; */
+	position: absolute;
+	right: 0;
+	bottom: 1px;
+
+
+	&__current{
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		text-align: left;
+		padding-left: 13px;
+	}
+
+	&__splitter{
+		display: block;
+		position: absolute;
+		top: 24px;
+		left: 12px; 
+		border-bottom: 1px solid;
+		width: 50%;
+		margin: auto;
+		transform: rotate(-40deg);
+	}
+
+	&__count{
+		display: block;
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		text-align: right;
+		padding-right: 13px;
+	}
+}

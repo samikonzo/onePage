@@ -7,7 +7,7 @@ class LinkMenuList extends React.Component{
 		super(props)
 
 		this.state = {
-			visible : this.props.visibility //false
+			visible : this.props.visibility
 		}
 
 		this._showContent = this._showContent.bind(this)
@@ -17,11 +17,11 @@ class LinkMenuList extends React.Component{
 	componentDidMount(){
 		this.uprise = Uprise(this.elem)
 
-		/*if(this.props.visibility){
+		if(this.props.visibility){
 			this.setState({
 				visible: true
 			})
-		}*/
+		}
 	}
 
 	componentWillReceiveProps(newProps){
@@ -31,12 +31,12 @@ class LinkMenuList extends React.Component{
 	}
 
 	_showContent(){
-		l('_showContent')
+		//l('_showContent')
 		this.uprise.show()
 	}
 
 	_hideContent(){
-		l('_hideContent')
+		//l('_hideContent')
 		this.uprise.hide()
 	}
 
@@ -48,7 +48,7 @@ class LinkMenuList extends React.Component{
 		var selected = this.props.currentPageHref
 
 		if(this.uprise){
-			l('visible : ', this.state.visible)
+			//l('visible : ', this.state.visible)
 			if(this.state.visible) this._showContent()
 			else this._hideContent()
 		}
@@ -59,7 +59,7 @@ class LinkMenuList extends React.Component{
 				{pages && pages.map( (page, i) => {
 					var className = 'LinkMenu__link'
 					var selectedClass = (page.href == selected) ? ' LinkMenu__link--selected' : '';
-					var upriseClass = ` uprise--hidden uprise--right uprise--delay${i+1}`;
+					var upriseClass = ` uprise--right uprise--delay${i+1}`;
 					
 					className += selectedClass				
 					className += upriseClass

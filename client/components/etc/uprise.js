@@ -1,29 +1,38 @@
 var l = console.log
 
+/*
+	uprise--up  - direction ( if no direction => just opacity change)
+	uprise--delay1 - transition delay : time * 200 = 200
+	uprise--time10 - transition time : time * 100 = 1000
+	uprise--length1 - transform distance : distance * 10 = 100 px
+*/
+
+
 function Uprise(element){
 	if(element === undefined) {
 		element = document
 	}
 
-	//	classes
-	const UPRISE_HIDDEN = 'uprise--hidden'
-	const UPRISE_DURATION_DEFAULT = 1000 // transition time in s
+	//	constants
+	const UPRISE_TIME_DEFAULT = 1000 // transition time in s
 	const UPRISE_DELAY = 'uprise--delay'
-	const UPRISE_DELAY_DEFAULT = 100
-	const UPRISE_DIRECTION_TRANSFORM = {
-		'uprise--up' : 'translateY(-100px)',
-		'uprise--down' : 'translateY(200px)',
-		'uprise--left' : 'translateX(-100px)',
-		'uprise--right' : 'translateX(100px)',
-	}
+	const UPRISE_DELAY_DEFAULT = 0 // transition-delay in ms
 	const UPRISE_DIRECTION_TRANSFORM_INIT = 'translate(0,0)'
-	const UPRISE_DIRECTION_NAMES = [
-		'uprise--up',
-		'uprise--down',
-		'uprise--left',
-		'uprise--right'
-	]
-	const UPRISE_DIRECTION_DEFAULT = 'up'
+	const UPRISE_DIRECTION_TRANSFORM = {
+		'uprise--up' : 'translateY(-{{VALUE}}px)',
+		'uprise--down' : 'translateY({{VALUE}}px)',
+		'uprise--left' : 'translateX(-{{VALUE}}px)',
+		'uprise--right' : 'translateX({{VALUE}}px)',
+		'init'		: UPRISE_DIRECTION_TRANSFORM_INIT
+	}
+	const UPRISE_DIRECTION_NAMES = ['uprise--up', 'uprise--down', 'uprise--left', 'uprise--right']
+	const UPRISE_DIRECTION_DEFAULT = ''
+	const UPRISE_LENGTH_DEFAULT = 100 //px
+
+	function getTransform(direction, length){
+		if(!direction) return UPRISE_DIRECTION_TRANSFORM['init']
+		return UPRISE_DIRECTION_TRANSFORM[direction].replace(/({{VALUE}})/, length)
+	}
 
 
 	//	vars
@@ -60,6 +69,8 @@ function Uprise(element){
 			var classList
 			var direction
 			var delay
+			var time
+			var length
 
 			//if element already proccesed by Uprise return undefined
 			if( el.Uprise ){
@@ -68,6 +79,7 @@ function Uprise(element){
 			}
 
 			el.Uprise = true
+
 
 			// only uprise classes are needed
 			classList = [].filter.call(el.classList, className => {
@@ -87,6 +99,7 @@ function Uprise(element){
 				return !!~className.indexOf('uprise')
 			})
 
+
 			// find delay / direction classes
 			classList.forEach( className => {
 
@@ -95,8 +108,18 @@ function Uprise(element){
 					delay = +className.split('delay')[1] * 200
 					if(delay > maxDelay){
 						maxDelay = delay
-						//l('maxDelay : ', maxDelay)
 					}
+
+				//	time  
+				} else if( className.indexOf('time') != -1 ){
+					time = +className.split('time')[1] * 100
+					if(time > maxTime) maxTime = time
+
+		
+				//	length
+				} else if( className.indexOf('length') != -1 ){
+					length = ++className.split('length')[1] * 10
+		
 
 				//	direction and something else 
 				} else {
@@ -105,15 +128,15 @@ function Uprise(element){
 							direction = directionName
 						}
 					})
-
 				}	
 			})
 
 			return {
-				elem 		: el,
-				delay 		: delay || UPRISE_DELAY_DEFAULT,
-				direction 	: direction || UPRISE_DIRECTION_DEFAULT,
-				// time 	: duration || UPRISE_DURATION_DEFAULT,
+				elem 			: el,
+				delay 			: delay || UPRISE_DELAY_DEFAULT,
+				direction 		: direction || UPRISE_DIRECTION_DEFAULT,
+				time 			: time || UPRISE_TIME_DEFAULT,
+				length 			: length || UPRISE_LENGTH_DEFAULT,
 			}
 		})
 
@@ -127,10 +150,8 @@ function Uprise(element){
 		//l('--------------show--------------')
 
 		if(!uprises.length){
-
 			if( find() ) show()
 			else noUprise()
-				
 			return
 		}
 
@@ -141,13 +162,16 @@ function Uprise(element){
 			return
 		}
 
-		hide.clearTimers()
+		hide.clearTimers && hide.clearTimers()
 
 		uprises.forEach( item => {
 			var style = item.elem.style
+			var time = item.time + 'ms'
 
 			style.display = ''
-			style.transition = ''
+			style.transition = time || UPRISE_TIME_DEFAULT + 'ms'
+
+			//l(item.time)
 
 			setTimeout(() => {
 				style.opacity = 1
@@ -163,78 +187,100 @@ function Uprise(element){
 
 
 	function hide(init){
+
+		// remove all timers
+		hide.clearTimers && hide.clearTimers()
+
 		//l('--------------hide--------------')
-
-		if(!uprises.length){
-			if( find() ) show()
-			else noUprise()
-			return
-		}
+		return new Promise( (resolve, reject) => {
 
 
-		if(!hide.timers){
-			hide.timers = [];
-			hide.clearTimers = function() {
-				this.timers.forEach(timer => {
-					clearTimeout(timer)
-				})
-			};
-		}
-
-
-		uprises.forEach( item => {
-			//l(item)
-
-			var style = item.elem.style
-			var time = item.time || UPRISE_DURATION_DEFAULT
-			var delay = maxDelay - item.delay
-			var direction = item.direction
-
-			// fast change parameters
-			if(init){
-				time = 0
-				delay = 0
+			if(!uprises.length){
+				if( find() ) show()
+				else noUprise()
+				return
 			}
 
-			style.transition = time + 'ms'
 
-			//l(' HIDE : ')
-			//l( 'maxDelay : ', maxDelay)
-			//l( 'time :', time)
-			//l( 'delay :', delay)
-			//l( 'time + delay : ', time + delay)
-
-			// change props when delay time is over
-			var timer1 = setTimeout(() => {
-				style.opacity = '' // to 0
-				style.transform = UPRISE_DIRECTION_TRANSFORM[direction]
-				//style.transition = time + 'ms'
-			}, delay)
-
-			// remove displaying
-			var timer2 = setTimeout(() => {
-				style.display = 'none'
-			}, delay + time)
-
-			// add timers to hide.timers
-			hide.timers.push(timer1)
-			hide.timers.push(timer2)
-		})
-
-
-		// after everything changed
-		var timer3 = setTimeout(() => {
-			if(init){
-				initialized = true
-				l('--------------init--------------')
-				l('maxDelay : ', maxDelay)
+			if(!hide.timers){
+				hide.timers = [];
+				hide.clearTimers = function() {
+					this.timers.forEach(timer => {
+						clearTimeout(timer)
+					})
+				};
 			}
-		}, function(){
-			if(init) return 0
-			else return	maxDelay + (maxTime || UPRISE_DURATION_DEFAULT)
-		})
 
-		hide.timers.push(timer3)
+
+			uprises.forEach( item => {
+				//l(item)
+
+				var style = item.elem.style
+				var time = item.time || UPRISE_TIME_DEFAULT
+				var delay = maxDelay - item.delay
+				var direction = item.direction
+				var length = item.length
+
+				// fast change parameters
+				if(init){
+					time = 0
+					delay = 0
+				}
+
+			
+				style.transition = time + 'ms'
+
+				//l(' HIDE : ')
+				//l( 'maxDelay : ', maxDelay)
+				//l( 'time :', time)
+				//l( 'delay :', delay)
+				//l( 'time + delay : ', time + delay)
+
+				// change props when delay time is over
+				var timer1 = setTimeout(() => {
+					style.opacity = '' // to 0
+					style.transform = getTransform(direction, length)
+					//style.transition = time + 'ms'
+				}, delay)
+
+				// remove displaying
+				var timer2 = setTimeout(() => {
+					style.display = 'none'
+				}, delay + time)
+
+				// add timers to hide.timers
+				hide.timers.push(timer1)
+				hide.timers.push(timer2)
+			})
+
+
+			// after everything changed
+			var wholeTime
+			if(init){
+				wholeTime = 0
+			} else {
+				wholeTime = maxDelay + (maxTime || UPRISE_TIME_DEFAULT)
+			}
+
+			//l(element)
+			//l('maxDelay : ', maxDelay)
+			//l('maxTime : ', maxTime)
+			//l('wholeTime : ', wholeTime)
+
+
+			var timer3 = setTimeout(() => {
+				if(init){
+					initialized = true
+					//l('--------------init--------------')
+					//l('maxDelay : ', maxDelay)
+				}
+
+				resolve()
+			}, wholeTime)
+
+			hide.timers.push(timer3)
+
+		})
 	}	
 
 

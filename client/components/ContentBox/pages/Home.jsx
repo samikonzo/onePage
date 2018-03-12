@@ -48,19 +48,19 @@ class Home extends React.Component{
 				ref={(elem) => {this.elem = elem}}
 			> 
 
-				<header className="uprise--up uprise--delay3 uprise--hidden">
+				<header className="uprise--up uprise--delay3 ">
 					Hello, this is the homepage 
 				</header>
 
-				<main className="uprise--up uprise--delay2 uprise--hidden">
-			 		<p className="uprise--right uprise--delay4 uprise--hidden">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, iure? </p>
+				<main className="uprise--up uprise--delay2 ">
+			 		<p className="uprise--right uprise--delay4 ">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, iure? </p>
 				</main>
 
-				<footer className="uprise--up uprise--delay1 uprise--hidden" >  
-					<p className="uprise--right uprise--delay5 uprise--hidden"> some foot here! </p>
+				<footer className="uprise--up uprise--delay1 " >  
+					<p className="uprise--right uprise--delay5 uprise--length20 uprise--time10"> some foot here! </p>
 				</footer>
 				
-				<DelayLink to="/items" className="uprise--hidden uprise--delay3"> Items </DelayLink>
+				<DelayLink to="/items" className=" uprise--delay3"> Items </DelayLink>
 			</div>
 		)
 	}
