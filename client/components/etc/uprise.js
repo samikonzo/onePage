@@ -1,14 +1,4 @@
-/*
-	TODO : 
-	1) remove buzy waiter
-	2) add new buzy waiter
-*/
-
-
-
 var l = console.log
-
-
 
 function Uprise(element){
 	if(element === undefined) {
@@ -17,7 +7,7 @@ function Uprise(element){
 
 	//	classes
 	const UPRISE_HIDDEN = 'uprise--hidden'
-	const UPRISE_DURATION_DEFAULT = 1 // transition time in s
+	const UPRISE_DURATION_DEFAULT = 1000 // transition time in s
 	const UPRISE_DELAY = 'uprise--delay'
 	const UPRISE_DELAY_DEFAULT = 100
 	const UPRISE_DIRECTION_TRANSFORM = {
@@ -42,22 +32,25 @@ function Uprise(element){
 	var maxDelay = 0
 	var maxTime = 0
 	var showed = false
-	var buzy = false
+	var initialized = false
 
 
 	init()
 
 
-
 	function init(){
 		find()
 
-		if(showed) show(true)
-		else hide(true)	
+		var init = true
+
+		if(showed) show(init)
+		else hide(init)	
 	}
 
 
 	function find(){
+		//	l('--------------find--------------')
+
 		uprises = element.querySelectorAll("[class*='uprise']")
 
 		//	no uprises finded
@@ -100,7 +93,10 @@ function Uprise(element){
 				//	delay
 				if( className.indexOf('delay') != -1 ){
 					delay = +className.split('delay')[1] * 200
-					if(delay > maxDelay) maxDelay = delay
+					if(delay > maxDelay){
+						maxDelay = delay
+						//l('maxDelay : ', maxDelay)
+					}
 
 				//	direction and something else 
 				} else {
@@ -127,14 +123,8 @@ function Uprise(element){
 	}
 
 
-	function show(){
-		l('show')
-
-		if(buzy){
-			waitUnbusy(show)
-			return
-		}
-		buzy = true
+	function show(init){
+		//l('--------------show--------------')
 
 		if(!uprises.length){
 
@@ -144,10 +134,20 @@ function Uprise(element){
 			return
 		}
 
+		if(!initialized){
+			setTimeout(() => {
+				show()
+			}, 100)
+			return
+		}
+
+		hide.clearTimers()
+
 		uprises.forEach( item => {
 			var style = item.elem.style
 
 			style.display = ''
+			style.transition = ''
 
 			setTimeout(() => {
 				style.opacity = 1
@@ -162,22 +162,25 @@ function Uprise(element){
 	}
 
 
-	function hide(fast){
-		l('hide')
-
-		if(buzy){
-			waitUnbusy(hide)
-			return
-		}
-		buzy = true
+	function hide(init){
+		//l('--------------hide--------------')
 
 		if(!uprises.length){
-
 			if( find() ) show()
 			else noUprise()
-				
 			return
 		}
+
+
+		if(!hide.timers){
+			hide.timers = [];
+			hide.clearTimers = function() {
+				this.timers.forEach(timer => {
+					clearTimeout(timer)
+				})
+			};
+		}
+
 
 		uprises.forEach( item => {
 			//l(item)
@@ -187,61 +190,60 @@ function Uprise(element){
 			var delay = maxDelay - item.delay
 			var direction = item.direction
 
-			if(fast){
+			// fast change parameters
+			if(init){
 				time = 0
 				delay = 0
-				maxDelay = 0
 			}
 
-			style.transition = time + 's'
+			style.transition = time + 'ms'
 
-			setTimeout(() => {
+			//l(' HIDE : ')
+			//l( 'maxDelay : ', maxDelay)
+			//l( 'time :', time)
+			//l( 'delay :', delay)
+			//l( 'time + delay : ', time + delay)
+
+			// change props when delay time is over
+			var timer1 = setTimeout(() => {
 				style.opacity = '' // to 0
 				style.transform = UPRISE_DIRECTION_TRANSFORM[direction]
+				//style.transition = time + 'ms'
 			}, delay)
+
+			// remove displaying
+			var timer2 = setTimeout(() => {
+				style.display = 'none'
+			}, delay + time)
+
+			// add timers to hide.timers
+			hide.timers.push(timer1)
+			hide.timers.push(timer2)
 		})
 
-		setTimeout(() => {
-			buzy = false
-		}, maxDelay + (maxTime || UPRISE_DURATION_DEFAULT))
 
-	}
+		// after everything changed
+		var timer3 = setTimeout(() => {
+			if(init){
+				initialized = true
+				l('--------------init--------------')
+				l('maxDelay : ', maxDelay)
+			}
+		}, function(){
+			if(init) return 0
+			else return	maxDelay + (maxTime || UPRISE_DURATION_DEFAULT)
+		})
+
+		hide.timers.push(timer3)
+	}	
 
 
 	function getState(){
 		return uprises.length && {elements : uprises, showed: showed}
 	}
 
-	function waitUnbusy(func){
-		l('waitUnbusy')
+	function noUprise(){
 
-		// check queue, if exist, jsut add to queue and return
-		if(!waitUnbusy.queue){
-			waitUnbusy.queue = []
-		} 
-
-		waitUnbusy.queue.push(func)
-		l('func added')
-
-		if(!waitUnbusy.timer){
-			waitUnbusy.timer = 100
-		}
-
-
-		setTimeout(function f(){
-			if(buzy){
-				setTimeout(f, waitUnbusy.timer)
-				return
-			}
-
-			// release first func in queue
-			var firstQueueFunc = waitUnbusy.queue.splice(0,1)[0]
-			firstQueueFunc()
-
-			// start waiter if another func exist
-			if(waitUnbusy.queue.length) setTimeout(f, waitUnbusy.timer)
-
-		}, 0)	
 	}
 
 	return { 
