@@ -22,7 +22,7 @@ class StatusWindow extends React.Component{
 			currentPageHref : PageStore.getCurrentPageHref(),
 			currentPageNum : PageStore.getCurrentPageNum(),
 			visibility: {
-				LinkMenu : true,
+				LinkMenu : false,
 			}
 		}
 

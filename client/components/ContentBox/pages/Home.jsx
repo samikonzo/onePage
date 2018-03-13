@@ -27,6 +27,7 @@ class Home extends React.Component{
 
 	componentWillUnmount(){
 		PageStore.removePageChangeListener(this._hideContent)
+		this.uprise.clear()
 	}
 
 	_hideContent(){
@@ -59,7 +60,7 @@ class Home extends React.Component{
 					<p className="uprise--right uprise--delay5 uprise--length20 uprise--time10"> some foot here! </p>
 				</footer>
 				
-				<DelayLink to="/information"> bebebe </DelayLink> 
+				<DelayLink to="/information" className="uprise--delay3"> bebebe </DelayLink> 
 			</div>
 		)
 	}

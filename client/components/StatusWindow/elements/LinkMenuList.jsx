@@ -54,7 +54,7 @@ class LinkMenuList extends React.Component{
 		}
 
 		return(
-			<ul ref={elem => this.elem = elem}>
+			<ul ref={elem => this.elem = elem} className="LinkMenuList">
 
 				{pages && pages.map( (page, i) => {
 					var className = 'LinkMenu__link'

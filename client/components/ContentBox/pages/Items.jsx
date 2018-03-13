@@ -19,7 +19,6 @@ class Items extends React.Component{
 			scroll : 0//percent ?
 		}
 
-		//this.handleRemove = this.handleRemove.bind(this)
 		this._showContent = this._showContent.bind(this)
 		this._hideContent = this._hideContent.bind(this)
 		this._itemsChange = this._itemsChange.bind(this)
@@ -35,30 +34,35 @@ class Items extends React.Component{
 		this.elem.addEventListener('wheel', function(e){
 			var that = this
 
-			changeScrollTop(this.scrollTop + e.deltaY)
+			changeScrollTop(e.deltaY > 0)
 
-			function changeScrollTop(endScrollTop){
-				var step = 10
-				var stepTime = 100
+			function changeScrollTop(destination){
+				//l(destination, that.scrollTop)
 
-				if(changeScrollTop.timer){
-					clearTimeout(changeScrollTop.timer)
+				var n = 7
+				var step = 7
+				var stepTime = 5
+
+				if(destination){
+					changeScrollTop.timer = setTimeout(function f(){
+
+						that.scrollTop += step
+						n--
+
+						if(n > 0) changeScrollTop.timer = setTimeout(f, stepTime)
+
+					}, 0)
+
+				} else {
+					changeScrollTop.timer = setTimeout(function f(){
+
+						that.scrollTop -= step
+						n--
+
+						if(n > 0) changeScrollTop.timer = setTimeout(f, stepTime)
+
+					}, 0)
 				}
-
-				changeScrollTop.timer = setTimeout(function f(){
-					var diff = that.scrollTop - endScrollTop
-					var plusMinus = Math.abs(diff)/diff
-
-					if(Math.abs(diff) > 10){
-						that.scrollTop += step * plusMinus
-					} else {
-						that.scrollTop += diff
-						return
-					}
-
-					changeScrollTop.timer = setTimeout(f, stepTime)
-				}, 0)
-
 			}
 		})
 	}
@@ -66,10 +70,11 @@ class Items extends React.Component{
 	componentWillUnmount(){
 		PageStore.removePageChangeListener(this._hideContent)
 		ItemsStore.removeItemChangeListener(this._itemsChange)
+		this.uprise.clear()
 	}
 
 	_showContent(){
-		this.uprise.show()
+		//this.uprise.show()
 	}
 
 	_hideContent(){
@@ -79,19 +84,8 @@ class Items extends React.Component{
 	}
 
 	_itemsChange(){
-		//
 
 	}
-
-
-/*	handleRemove(){
-		return new Promise( (resolve, reject) => {
-			l('Items : handleRemove emited')
-			setTimeout(function(){
-				resolve('Items : end')
-			},1000)
-		})
-	}*/
 
 
 	render(){
@@ -99,7 +93,7 @@ class Items extends React.Component{
 			<div ref={elem => this.elem = elem} className="Items"> 
 				{
 					this.state.items.map( (item, i) => {
-						var className = `Items__item uprise--up uprise--delay${10-i}`
+						var className = `Items__item uprise--down uprise--delay${i % 2} uprise--auto`
 
 						return (
 							<div className={className} key={i}>

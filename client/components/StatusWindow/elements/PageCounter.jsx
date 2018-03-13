@@ -21,6 +21,10 @@ class PageCounter extends React.Component{
 		this._showContent()
 	}
 
+	componentWillUnmount(){
+		this.uprise.clear()
+	}
+
 	componentWillReceiveProps(newProps){
 		if(newProps.currentPageNum != this.state.currentPageNum){
 
