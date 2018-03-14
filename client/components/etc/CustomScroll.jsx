@@ -10,7 +10,7 @@ class CustomScroll extends React.Component{
 
 		this.handleScrollDown = this.handleScrollDown.bind(this)
 		this.handleScrollUp = this.handleScrollUp.bind(this)
-		this.changeScrollTop =  this.changeScrollTop.bind(this)
+		this.changeScrollPosition =  this.changeScrollPosition.bind(this)
 		this.handleWindowResize = this.handleWindowResize.bind(this)
 	}
 
@@ -23,7 +23,7 @@ class CustomScroll extends React.Component{
 
 		this.scroll.addEventListener('mousedown', this.handleScrollDown)
 		document.addEventListener('mouseup', this.handleScrollUp)
-		document.addEventListener('mousemove', this.changeScrollTop)
+		document.addEventListener('mousemove', this.changeScrollPosition)
 		window.addEventListener('resize', this.handleWindowResize)
 	}
 
@@ -34,7 +34,7 @@ class CustomScroll extends React.Component{
 	componentWillUnmount(){
 		this.scroll.removeEventListener('mousedown', this.handleScrollDown)
 		document.removeEventListener('mouseup', this.handleScrollUp)
-		document.removeEventListener('mousemove', this.changeScrollTop)
+		document.removeEventListener('mousemove', this.changeScrollPosition)
 		window.removeEventListener('resize', this.handleWindowResize)
 	}
 
@@ -54,7 +54,7 @@ class CustomScroll extends React.Component{
 		})
 	}
 
-	changeScrollTop(e){
+	changeScrollPosition(e){
 		if(!this.state.dragged) return
 
 		var customScrollHeight = this.state.customScrollHeight
@@ -81,7 +81,7 @@ class CustomScroll extends React.Component{
 	}
 
 	handleWindowResize(){
-		l(this.elem)
+		//l(this.elem)
 		var customScrollHeight = this.elem.offsetHeight
 		var customScrollTop = this.elem.getBoundingClientRect().top + this.elem.clientTop
 		var scrollHeight = this.scroll.offsetHeight
@@ -97,8 +97,8 @@ class CustomScroll extends React.Component{
 */
 		
 
-		l('this.elem.getBoundingClientRect().top  : ', this.elem.getBoundingClientRect().top )
-		l('this.state.scroll : ', this.state.scroll)
+		//l('this.elem.getBoundingClientRect().top  : ', this.elem.getBoundingClientRect().top )
+		//l('this.state.scroll : ', this.state.scroll)
 		//l('this.elem.clientTop : ', this.elem.clientTop)
 		//l('customScrollHeight : ', customScrollHeight)
 		//l('customScrollTop : ', customScrollTop)
@@ -123,20 +123,20 @@ class CustomScroll extends React.Component{
 		var scrollPosition = this.state.scrollPercent
 		var scrollClassName = 'CustomScroll__scroll '
 
-		l(customScrollTop, scrollPosition)
+		//l(customScrollTop, scrollPosition)
 
 		if(this.elem){
 			var customScrollHeight = this.state.customScrollHeight//+getComputedStyle(this.elem).height.match(/\d+(\.\d+)?/)[0]
-			var customScrollTopMax = /*this.state.scrollHeight*/ - customScrollHeight
+			var customScrollTopMax = this.props.scrollHeight/*this.state.scrollHeight*/ - customScrollHeight
 
 			if(customScrollTop > customScrollTopMax) customScrollTop = customScrollTopMax
 
 			//l('customScrollTop after :',  customScrollTop);
-			l('customScrollHeight : ', customScrollHeight)
-			l('this.elem.scrollHeight : ', this.elem.scrollHeight)
-			l('max : ', customScrollTopMax)
+			//l('customScrollHeight : ', customScrollHeight)
+			//l('this.elem.scrollHeight : ', this.elem.scrollHeight)
+			//l('max : ', customScrollTopMax)
+			//l('customScrollTop :',customScrollTop)
 
-			l('customScrollTop :',customScrollTop)
 			this.elem.style.top = customScrollTop + 'px'
 
 			if(this.scroll){

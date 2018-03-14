@@ -97,11 +97,11 @@ class Items extends React.Component{
 			<div ref={elem => this.elem = elem} className="Items"> 
 				{
 					this.state.items.map( (item, i) => {
-						var className = `Items__item uprise--right uprise--delay${i % 2} uprise--auto uprise--autohide`
+						var className = `Items__item uprise--right uprise--delay${i % 2} uprise--auto uprise--auto-hide`
 
 						return (
 							<div className={className} key={i}>
-								<div className="Items__title"> {item.title} </div>
+								<div className="Items__title uprise--top uprise--parent uprise--delay2"> {item.title} </div>
 								<div className="Items__description"> {item.description} </div>
 								<div className="Items__price"> {item.price} </div>
 							</div>
