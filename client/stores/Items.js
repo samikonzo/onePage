@@ -1,7 +1,7 @@
 var items = []
 var str = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum officiis quidem alias aliquid libero cum in sunt vitae amet, culpa fugit assumenda adipisci, quas rem aliquam quia quae odio reiciendis eum est nemo. Quae nostrum recusandae, neque adipisci quis delectus, ullam, vel dolorem illum repellendus perferendis laudantium nam et minus accusantium accusamus! Consequatur reiciendis tempore incidunt, eveniet eligendi mollitia minus autem necessitatibus hic dolores neque in excepturi voluptate, error perspiciatis vero ab. Et officiis incidunt, unde inventore vel nihil, eius error placeat rerum ipsa cupiditate possimus accusantium! Quis quaerat tenetur nesciunt deserunt optio sunt praesentium, alias unde illo iste. Iure!'
 
-for( var i = 0; i < 30; i++){
+for( var i = 0; i < 50; i++){
   items.push(new F())
 }
 

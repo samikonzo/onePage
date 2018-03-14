@@ -22,7 +22,9 @@ class StatusWindow extends React.Component{
 			currentPageHref : PageStore.getCurrentPageHref(),
 			currentPageNum : PageStore.getCurrentPageNum(),
 			visibility: {
-				LinkMenu : false,
+				LinkMenu 	: false,
+				PageCounter : true,
+				PageSlider 	: true,
 			}
 		}
 
@@ -93,14 +95,10 @@ class StatusWindow extends React.Component{
 				
 				{/*
 					
-					LinkMenu
-					PageSlider
-					PageCounter
 					PageChangeVisualizer ( loader )
 					Application? 
 
 				*/}
-				{/*<PageCounter pages={this.props.pages}/>*/}
 				
 
 				<LinkMenu 
@@ -112,11 +110,13 @@ class StatusWindow extends React.Component{
 
 				<PageCounter 
 					{...this.state}
+					visibility = {this.state.visibility.PageCounter}
 				/>
 
 				<PageSlider 
 					{...this.state}
 					handleItemClick = {this.handleLinkClick}
+					visibility = {this.state.visibility.PageSlider}
 				/>
 			</div>
 		)

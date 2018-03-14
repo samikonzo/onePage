@@ -35,9 +35,14 @@ Dispatcher.register( function(action) {
 		case Constants.NEXT_PAGE : {
 			PageStore.getCurrentPageNum()
 			
-			var nextPageNum = _currentPageNum + 1;
+			var nextPageNum
+
+			if(_currentPageNum == undefined) nextPageNum = 0 
+			else nextPageNum = _currentPageNum + 1;
+
 			if(nextPageNum > Pages.length - 1) return
 		
+
 			_currentPageHref = Pages[nextPageNum].href
 			_currentPageNum = nextPageNum
 
@@ -48,7 +53,10 @@ Dispatcher.register( function(action) {
 		case Constants.PREVIOUS_PAGE : {
 			PageStore.getCurrentPageNum()
 			
-			var previousPageNum = _currentPageNum - 1;
+			var previousPageNum 
+			if(_currentPageNum == undefined) previousPageNum = 0
+			else previousPageNum = _currentPageNum - 1;
+
 			if(previousPageNum < 0 ) return
 
 			_currentPageHref = Pages[previousPageNum].href

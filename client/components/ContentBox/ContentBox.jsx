@@ -3,7 +3,6 @@ import React 				from 'react'
 import { Switch, Route } 	from 'react-router-dom'
 import PageStore			from '../../stores/PageStore.js'
 
-
 //	style
 import './ContentBox.less'
 
@@ -11,7 +10,7 @@ import './ContentBox.less'
 import Home from './pages/Home.jsx'
 import Items from './pages/Items.jsx'
 import Contacts from './pages/Contacts.jsx'
-
+import Page404 from './pages/Page404.jsx'
 
 const l = console.log;
 
@@ -102,6 +101,9 @@ class ContentBox extends React.Component{
 							)
 						}
 					}/>
+
+					<Route path='/:url' component={Page404}/>
+
 				</Switch>
 			</div>
 		)
@@ -109,3 +111,5 @@ class ContentBox extends React.Component{
 }
 
 module.exports = ContentBox
+
+

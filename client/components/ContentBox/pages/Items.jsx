@@ -1,8 +1,9 @@
 import React 		from 'react'
-import Uprise 		from '../../etc/uprise.js'
 import PageStore 	from '../../../stores/PageStore.js'
 import ItemsStore 	from '../../../stores/ItemsStore.js'
+import Uprise 		from '../../etc/uprise.js'
 import CustomScroll from '../../etc/CustomScroll.jsx'
+import MakeItScroll from '../../etc/makeItScroll.js'
 
 import './Items.less'
 
@@ -16,54 +17,28 @@ class Items extends React.Component{
 
 		this.state = {
 			items : ItemsStore.getItems(),
-			scroll : 0//percent ?
+			scroll : 0, // px
+			scrollPercent : 0, // from 0 to 1
+			scrollHeight : 0,
 		}
 
-		this._showContent = this._showContent.bind(this)
-		this._hideContent = this._hideContent.bind(this)
-		this._itemsChange = this._itemsChange.bind(this)
+		this._showContent 			= this._showContent.bind(this)
+		this._hideContent 			= this._hideContent.bind(this)
+		this._itemsChange 			= this._itemsChange.bind(this)
+		this.handleScrollTopChange	= this.handleScrollTopChange.bind(this)
 	}
 
 	componentDidMount(){
 		PageStore.addPageChangeListener(this._hideContent)
 		ItemsStore.addItemChangeListener(this._itemsChange)
 		this.uprise = Uprise(this.elem)
-		this._showContent()
 
+		
 		this.elem.wheelBuzy = true;
-		this.elem.addEventListener('wheel', function(e){
-			var that = this
+		this.scroll = MakeItScroll(this.elem, this.handleScrollTopChange)
 
-			changeScrollTop(e.deltaY > 0)
-
-			function changeScrollTop(destination){
-				//l(destination, that.scrollTop)
-
-				var n = 7
-				var step = 7
-				var stepTime = 5
-
-				if(destination){
-					changeScrollTop.timer = setTimeout(function f(){
-
-						that.scrollTop += step
-						n--
-
-						if(n > 0) changeScrollTop.timer = setTimeout(f, stepTime)
-
-					}, 0)
-
-				} else {
-					changeScrollTop.timer = setTimeout(function f(){
-
-						that.scrollTop -= step
-						n--
-
-						if(n > 0) changeScrollTop.timer = setTimeout(f, stepTime)
-
-					}, 0)
-				}
-			}
+		this.setState({
+			scrollHeight : this.elem.scrollHeight
 		})
 	}
 
@@ -71,6 +46,7 @@ class Items extends React.Component{
 		PageStore.removePageChangeListener(this._hideContent)
 		ItemsStore.removeItemChangeListener(this._itemsChange)
 		this.uprise.clear()
+		this.scroll.clear()
 	}
 
 	_showContent(){
@@ -87,13 +63,29 @@ class Items extends React.Component{
 
 	}
 
+	handleScrollTopChange(addScroll){
+		var prevScroll = this.state.scroll
+		var nextScroll = prevScroll + addScroll
+		var maxScroll = this.elem.scrollHeight - this.elem.offsetHeight
+
+		if(nextScroll < 0) nextScroll = 0
+		if(nextScroll > maxScroll) nextScroll = maxScroll
+
+		this.setState({
+			scroll: nextScroll,
+			scrollPercent: nextScroll / maxScroll
+		})
+	}
+
 
 	render(){
+		if(this.elem) this.elem.scrollTop = this.state.scroll
+
 		return (
 			<div ref={elem => this.elem = elem} className="Items"> 
 				{
 					this.state.items.map( (item, i) => {
-						var className = `Items__item uprise--down uprise--delay${i % 2} uprise--auto`
+						var className = `Items__item uprise--right uprise--delay${i % 2} uprise--auto uprise--autohide`
 
 						return (
 							<div className={className} key={i}>
@@ -105,7 +97,12 @@ class Items extends React.Component{
 					})
 				}
 
-				<CustomScroll className="Items__scroll"/>
+				<CustomScroll 	className="Items__scroll" 
+								scroll={this.state.scroll} 
+								scrollPercent={this.state.scrollPercent} 
+								scrollHeight={this.state.scrollHeight}
+								handleScrollTopChange={this.handleScrollTopChange}
+								/>
 
 			</div>
 		)

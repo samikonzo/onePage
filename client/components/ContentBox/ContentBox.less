@@ -1,5 +1,6 @@
 .ContentBox{
 	min-height: 100%;
+	max-height: 100%;
 	width: 100%;
 	//max-width: 700px;
 	overflow: hidden;
@@ -9,13 +10,14 @@
 	opacity: 1;
 	transition: .7s;
 	
-
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: center;
 	align-items: center;
+	//align-content: flex-end;
 
 	&--hidden{
 		opacity: 0;
 	}
 }
+

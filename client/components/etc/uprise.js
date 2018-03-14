@@ -1,4 +1,6 @@
-var l = console.log
+//var l = console.log
+
+import throttle from './throttle.js'
 
 /*
 	uprise--up  - direction ( if no direction => just opacity change)
@@ -6,6 +8,7 @@ var l = console.log
 	uprise--time10 - transition time : time * 100 = 1000
 	uprise--length1 - transform distance : distance * 10 = 100 px
 	uprise--auto 	- uprise without show function, just by boundingClientRect
+	uprise--autohide - hide whitout hide function
 */
 
 
@@ -31,6 +34,12 @@ function Uprise(element){
 		'uprise--left' : 'translateX(-{{VALUE}}px)',
 		'uprise--right' : 'translateX({{VALUE}}px)',
 		'init'		: UPRISE_DIRECTION_TRANSFORM_INIT
+	}
+	const UPRISE_DIRECTION_OFFSET = {
+		'uprise--up' 	: {},
+		'uprise--down'	: {},
+		'uprise--left' 	: {},
+		'uprise--right'	: {},
 	}
 	
 
@@ -75,6 +84,7 @@ function Uprise(element){
 			var time
 			var length
 			var auto = false
+			var autoHide = false
 
 			//if element already proccesed by Uprise return undefined
 			if( el.upriseProccessed ){
@@ -137,6 +147,10 @@ function Uprise(element){
 				if( className.indexOf('auto') != -1 ){
 					auto = true
 				}
+
+				if( className.indexOf('autohide') != -1 ){
+					autoHide = true
+				}
 			})
 
 			// main data 
@@ -145,7 +159,8 @@ function Uprise(element){
 				direction 	: direction || UPRISE_DIRECTION_DEFAULT,
 				time 		: time || UPRISE_TIME_DEFAULT,
 				length 		: length || UPRISE_LENGTH_DEFAULT,
-				auto 		: auto
+				auto 		: auto,
+				autoHide 	: autoHide
 			}	
 
 			el.upriseData = upriseData
@@ -155,7 +170,7 @@ function Uprise(element){
 
 
 
-			return Object.assign( upriseData, {
+			return Object.assign({}, upriseData, {
 				elem : el,
 			})	
 		})
@@ -271,6 +286,7 @@ function Uprise(element){
 				var timer2 = setTimeout(() => {
 
 					if(auto){
+						// using with init!
 						item.elem.upriseCheck()
 					} else {
 						style.display = 'none'
@@ -338,57 +354,101 @@ function Uprise(element){
 
 	function bindAutoShow(elem){
 		document.addEventListener('wheel', upriseCheckEvent)
-		//window.addEventListener('resize', upriseCheckEvent)
 
-		function upriseCheckEvent() {
-			elem.upriseCheck()
+		// create trottle!
+		//window.addEventListener('resize', upriseCheckEvent)
+		var throttledUpriseCheckEvent = throttle(upriseCheckEvent, 100)
+		window.addEventListener('resize', throttledUpriseCheckEvent)
+
+
+		function upriseCheckEvent(e) {
+			elem.upriseCheck(e)
 		}
 
 		elem.upriseCheck = function(e){
-			l('elem.upriseCheck')
+			//l('elem.upriseCheck')
+			const SCROLL_HEIGHT = 100
+
 			var elCoords = this.getBoundingClientRect()
 			var parentCoords = this.parentElement.getBoundingClientRect()
 
 			var elTop = +elCoords.top.toFixed(0)
 			var elBottom = +elCoords.bottom.toFixed(0)
+			var elHeight = elCoords.height
 			var parentTop = +parentCoords.top.toFixed(0)
 			var parentBottom = +parentCoords.bottom.toFixed(0)
+			var parentTop_elBottom = 0 // distance from parentTop to elBottom
+
+			var autoHide = this.upriseData.autoHide
+
+			var scrollHeight = 0
+			if(e && e.type == 'wheel'){
+				scrollHeight = SCROLL_HEIGHT * Math.abs(e.deltaY) / e.deltaY;
+			}
 
 			//l(elTop, ' : ', elBottom, '  |  ', parentTop, ' : ', parentBottom)
 
-			if(!elem.upriseShowed && elTop < parentBottom){ 
-				elem.upriseShow()
-			} else if(elem.upriseShowed && (elBottom < parentTop || elTop > parentBottom)){
-				elem.upriseHide()
-			} 
+
+			if(!elem.upriseShowed){
+
+				if( (elTop - scrollHeight < parentBottom &&
+					elBottom - scrollHeight > parentTop + parentTop_elBottom) ||
+
+					(elTop - scrollHeight < parentBottom && 
+					elBottom - scrollHeight > parentTop && 
+					elHeight < parentTop_elBottom)) {
+
+					elem.upriseShow()
+				} 
+
+			} else {
+				//l(elem)
+				//l(elTop, ' : ', elBottom, '  |  ', parentTop, ' : ', parentBottom)
+				if(!autoHide) return
+
+				if( elBottom - scrollHeight < parentTop + parentTop_elBottom || 
+					elTop - scrollHeight > parentBottom){
+
+					elem.upriseHide()
+				}
+
+			}
 		}
 
 		elem.upriseShow = function(){
-			l('elem.upriseShow')
-			l(this.upriseData)
+			this.upriseShowed = true
 
 			var style = this.style
 			var upriseData = this.upriseData
-			var time = upriseData.time
+			var time = ( upriseData.time != undefined ) ? upriseData.time : UPRISE_TIME_DEFAULT
 			var delay = upriseData.delay
 
-			style.transition = /*time ||*/ UPRISE_TIME_DEFAULT + 'ms'
+			style.transition = time + 'ms'
 
 			setTimeout(() => {
 				style.opacity = 1
 				style.transform = UPRISE_DIRECTION_TRANSFORM_INIT
 			}, delay)
-
-			elem.upriseShowed = true
 		}
 
 		elem.upriseHide = function(){
-			elem.upriseShowed = false
+			this.upriseShowed = false
+
+			var style = this.style
+			var { time=UPRISE_TIME_DEFAULT, delay, direction, length} = this.upriseData
+
+			style.transition = time + 'ms'
+
+			setTimeout(() => {
+				style.opacity = ''
+				style.transform = getTransform(direction, length)
+			}, delay)
 		}
 
 		elem.upriseClear = function(){
 			l('elem.upriseClear')
-			document.removeEventListener('wheel', handleWheelEvent)
+			document.removeEventListener('wheel', upriseCheckEvent)
+			window.removeEventListener('resize', throttledUpriseCheckEvent)
 		}
 	}
 
@@ -399,5 +459,6 @@ function Uprise(element){
 		clear : clear,
 	}
 }
+
 
 export default Uprise

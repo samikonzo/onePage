@@ -4,13 +4,15 @@ App.jsx
 	icon or blinking symbol
 
 
-Items.jsx
-
-1) smooth scroll 
-
 Custom Scroll
 
 1) create Scroll
+2) drag and drop scroll
+3) change scroll position only over change scroll top props
 
 
-Clear uprise listeners 
+Pages 
+1) Remove flex from ContentBox
+2) Add flex to each page wrapper, if needed
+
+
