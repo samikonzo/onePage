@@ -1,4 +1,4 @@
-import throttle from './throttle.js'
+var l = console.log
 
 /*
 	uprise--up  - direction ( if no direction => just opacity change)
@@ -6,7 +6,6 @@ import throttle from './throttle.js'
 	uprise--time10 - transition time : time * 100 = 1000
 	uprise--length1 - transform distance : distance * 10 = 100 px
 	uprise--auto 	- uprise without show function, just by boundingClientRect
-	uprise--autohide - hide whitout hide function
 */
 
 
@@ -32,12 +31,6 @@ function Uprise(element){
 		'uprise--left' : 'translateX(-{{VALUE}}px)',
 		'uprise--right' : 'translateX({{VALUE}}px)',
 		'init'		: UPRISE_DIRECTION_TRANSFORM_INIT
-	}
-	const UPRISE_DIRECTION_OFFSET = {
-		'uprise--up' 	: {},
-		'uprise--down'	: {},
-		'uprise--left' 	: {},
-		'uprise--right'	: {},
 	}
 	
 
@@ -81,16 +74,14 @@ function Uprise(element){
 			var delay
 			var time
 			var length
-			var auto = false
-			var autoHide = false
 
 			//if element already proccesed by Uprise return undefined
-			if( el.upriseProccessed ){
+			if( el.Uprise ){
 				l('element already proccesed by Uprise')
 				return undefined
 			}
 
-			el.upriseProccessed = true
+			el.Uprise = true
 
 
 			// only uprise classes are needed
@@ -132,7 +123,7 @@ function Uprise(element){
 				} else if( className.indexOf('length') != -1 ){
 					length = ++className.split('length')[1] * 10
 		
-							
+
 				//	direction and something else 
 				} else {
 					UPRISE_DIRECTION_NAMES.forEach(directionName => {
@@ -141,36 +132,15 @@ function Uprise(element){
 						}
 					})
 				}	
-
-				if( className.indexOf('auto') != -1 ){
-					auto = true
-				}
-
-				if( className.indexOf('autohide') != -1 ){
-					autoHide = true
-				}
 			})
 
-			// main data 
-			var upriseData = {
-				delay 		: delay || UPRISE_DELAY_DEFAULT,
-				direction 	: direction || UPRISE_DIRECTION_DEFAULT,
-				time 		: time || UPRISE_TIME_DEFAULT,
-				length 		: length || UPRISE_LENGTH_DEFAULT,
-				auto 		: auto,
-				autoHide 	: autoHide
-			}	
-
-			el.upriseData = upriseData
-
-			// if auto => bind elem
-			if(auto) bindAutoShow(el)
-
-
-
-			return Object.assign({}, upriseData, {
-				elem : el,
-			})	
+			return {
+				elem 			: el,
+				delay 			: delay || UPRISE_DELAY_DEFAULT,
+				direction 		: direction || UPRISE_DIRECTION_DEFAULT,
+				time 			: time || UPRISE_TIME_DEFAULT,
+				length 			: length || UPRISE_LENGTH_DEFAULT,
+			}
 		})
 
 
@@ -256,7 +226,6 @@ function Uprise(element){
 				var delay = maxDelay - item.delay
 				var direction = item.direction
 				var length = item.length
-				var auto = item.auto
 
 				// fast change parameters
 				if(init){
@@ -282,16 +251,7 @@ function Uprise(element){
 
 				// remove displaying
 				var timer2 = setTimeout(() => {
-
-					if(auto){
-						// using with init!
-						item.elem.upriseCheck()
-					} else {
-						style.display = 'none'
-					}
-
-
-					
+					style.display = 'none'
 				}, delay + time)
 
 				// add timers to hide.timers
@@ -337,150 +297,15 @@ function Uprise(element){
 		return uprises.length && {elements : uprises, showed: showed}
 	}
 
-	function clear(){
-		l('clear ')
-		
-		uprises.forEach(item => {
-			item.elem.upriseClear && item.elem.upriseClear()
-		})
-
-		uprises = []
-	}
-
 	function noUprise(){
+
 	}
-
-	function bindAutoShow(elem){
-		document.addEventListener('wheel', upriseCheckEvent)
-
-		var throttledUpriseCheckEvent = throttle(upriseCheckEvent, 100)
-		window.addEventListener('resize', throttledUpriseCheckEvent)
-
-
-		function upriseCheckEvent(e) {
-			elem.upriseCheck(e)
-		}
-
-		elem.upriseCheck = function(e){
-			//l('elem.upriseCheck')
-			const SCROLL_HEIGHT = 100
-
-			var elCoords = this.getBoundingClientRect()
-			var parentCoords = this.parentElement.getBoundingClientRect()
-
-			
-
-			var elTop = +elCoords.top.toFixed(0)
-			var elBottom = +elCoords.bottom.toFixed(0)
-			var elHeight = elCoords.height
-			var parentTop = +parentCoords.top.toFixed(0)
-			var parentBottom = +parentCoords.bottom.toFixed(0)
-			var parentTop_elBottom = 0 // distance from parentTop to elBottom
-
-			var autoHide = this.upriseData.autoHide
-
-			var parentScrollTop = this.parentElement.scrollTop
-			var parentScrollTopMin = 0;
-			var parentScrollTopMax = this.parentElement.scrollHeight - this.parentElement.offsetHeight
-
-			var scrollHeight = 0
-			if(e && e.type == 'wheel'){
-				//l('this.parentElement.scrollTop : ', this.parentElement.scrollTop)
-				//l(e.deltaY)
-				scrollHeight = SCROLL_HEIGHT * Math.abs(e.deltaY) / e.deltaY;
-
-				if(e.deltaY > 0){
-					if(parentScrollTop >= parentScrollTopMax) return
-				} else {
-					if(parentScrollTop <= parentScrollTopMin) return
-				}
-			}
-
-			//l(elTop, ' : ', elBottom, '  |  ', parentTop, ' : ', parentBottom)
-
-
-
-
-			if(!elem.upriseShowed){
-
-				if( (elTop - scrollHeight < parentBottom &&
-					elBottom - scrollHeight > parentTop + parentTop_elBottom) ||
-
-					(elTop - scrollHeight < parentBottom && 
-					elBottom - scrollHeight > parentTop && 
-					elHeight < parentTop_elBottom)) {
-
-					elem.upriseShow()
-				} 
-
-			} else {
-				//l(elem)
-				//l(elTop, ' : ', elBottom, '  |  ', parentTop, ' : ', parentBottom)
-				if(!autoHide) return
-
-				if( elBottom - scrollHeight < parentTop + parentTop_elBottom || 
-					elTop - scrollHeight > parentBottom){
-
-					elem.upriseHide()
-				}
-
-			}
-		}
-
-		elem.upriseShow = function(){
-			this.upriseShowed = true
-
-			var style = this.style
-			var upriseData = this.upriseData
-			var time = ( upriseData.time != undefined ) ? upriseData.time : UPRISE_TIME_DEFAULT
-			var delay = upriseData.delay
-
-			style.transition = time + 'ms'
-
-			setTimeout(() => {
-				style.opacity = 1
-				style.transform = UPRISE_DIRECTION_TRANSFORM_INIT
-			}, delay)
-		}
-
-		elem.upriseHide = function(){
-			this.upriseShowed = false
-
-			var style = this.style
-			var { time=UPRISE_TIME_DEFAULT, delay, direction, length} = this.upriseData
-
-			style.transition = time + 'ms'
-
-			setTimeout(() => {
-				style.opacity = ''
-				style.transform = getTransform(direction, length)
-			}, delay)
-		}
-
-		elem.upriseClear = function(){
-			l('elem.upriseClear')
-			document.removeEventListener('wheel', upriseCheckEvent)
-			window.removeEventListener('resize', throttledUpriseCheckEvent)
-		}
-	}
-
-
-	function emitAutoCheck(parameter){
-		uprises.forEach( item => {
-			item.elem.upriseCheck()
-		})
-	}
-
-	var throttledEmitAutoCheck = throttle(emitAutoCheck, 500)
 
 	return { 
 		show: show,
 		hide: hide,
-		getState : getState,
-		clear : clear,
-		emitCheck : throttledEmitAutoCheck
+		getState : getState
 	}
 }
-
 
 export default Uprise

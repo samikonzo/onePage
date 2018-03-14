@@ -25,7 +25,8 @@ class Items extends React.Component{
 		this._showContent 			= this._showContent.bind(this)
 		this._hideContent 			= this._hideContent.bind(this)
 		this._itemsChange 			= this._itemsChange.bind(this)
-		this.handleScrollTopChange	= this.handleScrollTopChange.bind(this)
+		this.handleScrollTopAdd		= this.handleScrollTopAdd.bind(this)
+		this.handleScrollTopChange 	= this.handleScrollTopChange.bind(this)
 	}
 
 	componentDidMount(){
@@ -35,7 +36,7 @@ class Items extends React.Component{
 
 		
 		this.elem.wheelBuzy = true;
-		this.scroll = MakeItScroll(this.elem, this.handleScrollTopChange)
+		this.scroll = MakeItScroll(this.elem, this.handleScrollTopAdd)
 
 		this.setState({
 			scrollHeight : this.elem.scrollHeight
@@ -63,7 +64,7 @@ class Items extends React.Component{
 
 	}
 
-	handleScrollTopChange(addScroll){
+	handleScrollTopAdd(addScroll){
 		var prevScroll = this.state.scroll
 		var nextScroll = prevScroll + addScroll
 		var maxScroll = this.elem.scrollHeight - this.elem.offsetHeight
@@ -77,9 +78,20 @@ class Items extends React.Component{
 		})
 	}
 
+	handleScrollTopChange(nextPercent){
+		var maxScroll = this.elem.scrollHeight - this.elem.offsetHeight
+		var nextScroll = nextPercent * maxScroll
+
+		this.setState({
+			scroll: nextScroll,
+			scrollPercent: nextPercent
+		})
+	}
+
 
 	render(){
 		if(this.elem) this.elem.scrollTop = this.state.scroll
+		if(this.uprise) this.uprise.emitCheck(this.state.scroll)
 
 		return (
 			<div ref={elem => this.elem = elem} className="Items"> 
