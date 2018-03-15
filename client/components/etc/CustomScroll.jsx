@@ -1,170 +1,217 @@
 import React 		from 'react'
+import makeItScrollable from './makeItScrollable.js'
+
+
 import './CustomScroll.less'
+
+/*
+		TODO
+	1) scroll enable for change scrollTop of this.props.elem
+	2) change size of scroll to relative element visible part to element scrollHeight
+	2.1) min and max size of scroll
+	3) resize changing
+
+		ISSUE 
+	1) when away from page scrolling to top
+	2) when resizing from bottom to big screen - a lot of empty space
+	3) remove something from refresh
+*/
+
 
 
 class CustomScroll extends React.Component{
 	constructor(props){
 		super(props)
 
-		this.state = this.props
+		this.state = {
+			elem : this.props.elem,
+			scrollPercent : 0,
+			scrollTop: 0,
+			binded : false,
+		}
 
-		this.handleScrollDown = this.handleScrollDown.bind(this)
-		this.handleScrollUp = this.handleScrollUp.bind(this)
-		this.changeScrollPosition =  this.changeScrollPosition.bind(this)
-		this.handleWindowResize = this.handleWindowResize.bind(this)
+		this.bindScrollableElement 	= this.bindScrollableElement.bind(this)
+		this.handleScrollTopAdd 	= this.handleScrollTopAdd.bind(this)
+		this.handleWindowResize 	= this.handleWindowResize.bind(this)
+		this.refreshParameters 		= this.refreshParameters.bind(this)
+		this.handleScrollCursorDown	= this.handleScrollCursorDown.bind(this)
+		this.handleScrollCursorMove	= this.handleScrollCursorMove.bind(this)
+		this.handleScrollCursorUp	= this.handleScrollCursorUp.bind(this)
 	}
 
 	componentDidMount(){
-		this.setState({
-			dragged: false
-		})
-
-		this.handleWindowResize()
-
-		this.scroll.addEventListener('mousedown', this.handleScrollDown)
-		document.addEventListener('mouseup', this.handleScrollUp)
-		document.addEventListener('mousemove', this.changeScrollPosition)
 		window.addEventListener('resize', this.handleWindowResize)
-	}
 
-	componentWillReceiveProps(nextProps){
-		this.setState(nextProps)
+		if(this.state.elem && !this.state.binded){
+			this.bindScrollableElement()
+		}		
+
+		this.scrollCursor.addEventListener('mousedown', this.handleScrollCursorDown)
+		document.addEventListener('mousemove', this.handleScrollCursorMove)
+		document.addEventListener('mouseup', this.handleScrollCursorUp)
+
 	}
 
 	componentWillUnmount(){
-		this.scroll.removeEventListener('mousedown', this.handleScrollDown)
-		document.removeEventListener('mouseup', this.handleScrollUp)
-		document.removeEventListener('mousemove', this.changeScrollPosition)
+		this.state.elem.scrollable.clear()
+
 		window.removeEventListener('resize', this.handleWindowResize)
+		this.scrollCursor.removeEventListener('mousedown', this.handleScrollCursorDown)
+		document.removeEventListener('mousemove', this.handleScrollCursorMove)
+		document.removeEventListener('mouseup', this.handleScrollCursorUp)
 	}
 
-	handleScrollDown(e){
+	componentWillReceiveProps(nextProps){
+		l('NEW PROPS', nextProps)
+
+		if(!this.state.elem){
+			this.setState({
+				elem : nextProps.elem
+
+			}, function() {
+				if(this.state.elem && !this.state.binded){
+					this.bindScrollableElement()
+				}	
+			})
+		}
+	}
+
+
+
+	bindScrollableElement(){
+		var elem = this.state.elem
+
 		this.setState({
-			dragged: true
+			binded: true,
 		})
 
-		this.scroll.offsetY = e.offsetY
+		elem.scrollable = makeItScrollable(elem, this.handleScrollTopAdd) // make elem scrollable by wheel
+		this.refreshParameters() 
 	}
 
-	handleScrollUp(e){
-		if(!this.state.dragged) return
+	handleScrollTopAdd(added){
+		var elem = this.state.elem
+		elem.scrollTop += added
 
-		this.setState({
-			dragged: false
-		})
-	}
-
-	changeScrollPosition(e){
-		if(!this.state.dragged) return
-
-		var customScrollHeight = this.state.customScrollHeight
-		var scrollHeight = this.state.scrollHeight
-		var scrollTopMax = this.state.scrollTopMax
-		var customScrollTop = this.state.customScrollTop
-		var currentScrollTop = e.clientY - customScrollTop - this.scroll.offsetY
-
-		//l('customScrollHeight : ', customScrollHeight)
-		//l('scrollHeight : ', scrollHeight)
-		//l('scrollTopMax : ', scrollTopMax)
-		//l('customScrollTop : ', customScrollTop)
-		//l('this.scroll.offsetY : ', this.scroll.offsetY)
-		//l('currentScrollTop : ', currentScrollTop)
-
-
-		var newScrollPercent = currentScrollTop / scrollTopMax
-		if(newScrollPercent < 0 ) newScrollPercent = 0
-		if(newScrollPercent > 1) newScrollPercent = 1
-
-
-
-		this.props.handleScrollTopChange(newScrollPercent)
+		var scrollPercent = elem.scrollTop / (elem.scrollHeight - elem.offsetHeight)
+		this.refreshParameters()
 	}
 
 	handleWindowResize(){
-		//l(this.elem)
-		var customScrollHeight = this.elem.offsetHeight
-		var customScrollTop = this.elem.getBoundingClientRect().top + this.elem.clientTop
-		var scrollHeight = this.scroll.offsetHeight
-		var scrollTopMax = this.elem.offsetHeight - this.scroll.offsetHeight
-
-
-		/*l(customScrollHeight, 
-			this.elem.getBoundingClientRect().top, 
-			this.elem.clientTop,
-			customScrollTop, 
-			scrollHeight, 
-			scrollTopMax)
-*/
-		
-
-		//l('this.elem.getBoundingClientRect().top  : ', this.elem.getBoundingClientRect().top )
-		//l('this.state.scroll : ', this.state.scroll)
-		//l('this.elem.clientTop : ', this.elem.clientTop)
-		//l('customScrollHeight : ', customScrollHeight)
-		//l('customScrollTop : ', customScrollTop)
-		//l('scrollHeight : ', scrollHeight)
-		//l('scrollTopMax : ', scrollTopMax)
-
-		this.setState({
-			customScrollHeight 	: this.elem.offsetHeight,
-			customScrollTop 	: this.elem.getBoundingClientRect().top + this.elem.clientTop,
-			scrollHeight 		: this.scroll.offsetHeight,
-			scrollTopMax 		: this.elem.offsetHeight - this.scroll.offsetHeight,
-		})
-		//customScrollHeight
-		//scrollHeight
-		//scrollTopMax
-		//customScrollTop
+		this.refreshParameters()
 	}
 
+	refreshParameters(){
+		var elem = this.state.elem
 
-	render(){
-		var customScrollTop = this.state.scroll
-		var scrollPosition = this.state.scrollPercent
-		var scrollClassName = 'CustomScroll__scroll '
+		var fullHeight 		= elem.scrollHeight	
+		var scrollTop 		= elem.scrollTop
+		var scrollPercent 	= elem.scrollTop / (elem.scrollHeight - elem.offsetHeight)
+		if(scrollPercent > 1) scrollPercent = 1
+		if(scrollPercent < 0) scrollPercent = 0
+		
+		var wrapperTop 					= scrollTop
+		var wrapperHeight 				= elem.offsetHeight
+		var wrapperComputedStyle 		= getComputedStyle(this.wrapper)
+		var wrapperBorderWidthTop 		= parseInt(wrapperComputedStyle.borderTopWidth)
+		var wrapperBorderWidthBottom 	= parseInt(wrapperComputedStyle.borderBottomWidth)
+		var wrapperAvailableHeight 		= wrapperHeight - (wrapperBorderWidthTop + wrapperBorderWidthBottom)
 
-		//l(customScrollTop, scrollPosition)
-
-		if(this.elem){
-			var customScrollHeight = this.state.customScrollHeight//+getComputedStyle(this.elem).height.match(/\d+(\.\d+)?/)[0]
-			var customScrollTopMax = this.props.scrollHeight/*this.state.scrollHeight*/ - customScrollHeight
-
-			if(customScrollTop > customScrollTopMax) customScrollTop = customScrollTopMax
-
-			//l('customScrollTop after :',  customScrollTop);
-			//l('customScrollHeight : ', customScrollHeight)
-			//l('this.elem.scrollHeight : ', this.elem.scrollHeight)
-			//l('max : ', customScrollTopMax)
-			//l('customScrollTop :',customScrollTop)
-
-			this.elem.style.top = customScrollTop + 'px'
-
-			if(this.scroll){
-				var scrollHeight = this.state.scrollHeight //+getComputedStyle(this.scroll).height.match(/\d+(\.\d+)?/)[0]
-				var scrollTopMax = this.state.scrollTopMax //customScrollHeight - scrollHeight
-				var scrollTop = scrollTopMax * scrollPosition
-
-				this.scroll.style.top = scrollTop + 'px'
-
-				if(this.state.dragged) scrollClassName += 'CustomScroll__scroll--dragged'
-			}
+		var scrollCursorHeight	= (wrapperAvailableHeight / fullHeight) * 100
+		var scrollCursorTop 	= scrollPercent * (elem.offsetHeight - scrollCursorHeight)
+		var scrollCursorTopMax 	= wrapperAvailableHeight - scrollCursorHeight
+		if(scrollCursorTop > scrollCursorTopMax){
+			scrollCursorTop = scrollCursorTopMax
 		}
 
 
+
+
+		this.setState({
+			fullHeight : fullHeight,
+			scrollTop : scrollTop,
+			wrapperTop : wrapperTop,
+			wrapperHeight : wrapperHeight,
+			wrapperAvailableHeight: wrapperAvailableHeight,
+			scrollCursorHeight : scrollCursorHeight,
+			scrollCursorTop : scrollCursorTop,
+		})
+	}
+
+
+	// scrollCursorMove
+	handleScrollCursorDown(e){
+		var offsetY = e.offsetY
+
+		this.setState({
+			scrollCursorDragged: true,
+			scrollCursorDraggedOffset: offsetY,
+		})
+
+		l('mousedown')
+	}
+
+	handleScrollCursorMove(e){
+		if(!this.state.scrollCursorDragged) return
+
+			//change elem.scroll.top
+
+			var wrapperBoundingTop = this.wrapper.getBoundingClientRect().top
+			var distanceFromTop = e.clientY - this.state.scrollCursorDraggedOffset
+			var difference = distanceFromTop - wrapperBoundingTop
+			var percent = difference / (this.state.wrapperAvailableHeight - this.state.scrollCursorHeight)
+
+			if(percent < 0) percent = 0 
+			if(percent > 1) percent = 1
+
+			l(percent)
+
+			var elem = this.state.elem
+			elem.scrollTop = this.state.fullHeight * percent
+
+			this.refreshParameters()
+	}	
+
+	handleScrollCursorUp(e){
+		if(!this.state.scrollCursorDragged) return
+		this.setState({
+			scrollCursorDragged: false
+		})	
+
+		l('mouseup')
+	}
+
+
+
+	render(){
+		var state = this.state
+
+		if(this.state.binded){
+
+			if(this.wrapper != undefined){
+				var wrapperS = this.wrapper.style
+				wrapperS.top = state.wrapperTop + 'px'
+				wrapperS.height = state.wrapperHeight + 'px'
+			}
+
+			if(this.scrollCursor != undefined){
+				var cursorS = this.scrollCursor.style
+				cursorS.top = state.scrollCursorTop + 'px'
+				cursorS.height = state.scrollCursorHeight + 'px'
+			}
+
+		}
+
+		var scrollCursorClass = 'CustomScroll__scroll-cursor '
+		if(this.state.scrollCursorDragged) scrollCursorClass += 'CustomScroll__scroll-cursor--dragged'
+
 		return (
-			<div ref={elem => this.elem = elem} className="CustomScroll"> 
-				<div className={scrollClassName} ref={elem => this.scroll = elem}></div>
+			<div className="CustomScroll__wrapper" ref={elem => this.wrapper = elem}>
+				<div className={scrollCursorClass} ref={elem => this.scrollCursor = elem}></div> 
 			</div>
 		)
 	}
 }
 
-
-
-
-
-
-
-
-
 export default CustomScroll
+

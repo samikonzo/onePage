@@ -19,3 +19,4 @@ Pages
 Uprise
 
 1) a lot of code 
+2) one class for all -> uprise--[up,down,left,right]--l[length]--t[time]--d[delay]--as[for autoshow]--ah[for autohide]--p[for show/hide by parent event]

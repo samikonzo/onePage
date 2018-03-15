@@ -1,12 +1,21 @@
 .PageSlider{
 	position: fixed;
 	z-index: 2;
-	height: 100%;
-	right: 10px;
-	//border:1px solid;
-	display: flex;
+	/* height: 100%; */
+	left: 10px;
+
+	transform: translateY(-50%);
+	top:50%;
+	//top: 30px;
+	//right: 10px;
+
+
+	//border:1px solid blue;
+
+
+	/* display: flex;
 	flex-flow: column;
-	justify-content: center;
+	justify-content: center; */
 
 	&__slide{
 		position: relative;
@@ -31,7 +40,7 @@
 	}
 
 	&__slide--selected{
-		height: 50px;
+		height: 40px;
 		//border-color: black;
 		background: #e6b790;
 		

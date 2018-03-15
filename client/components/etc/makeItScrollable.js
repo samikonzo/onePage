@@ -1,6 +1,6 @@
 import throttle 	from './throttle.js'
 
-function MakeItScroll(elem, listenFunc){
+function makeItScrollable(elem, listenFunc){
 
 	var throttledListenFunc 
 
@@ -51,4 +51,4 @@ function MakeItScroll(elem, listenFunc){
 	}	
 }
 
-export default MakeItScroll
+export default makeItScrollable
