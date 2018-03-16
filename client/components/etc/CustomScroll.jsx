@@ -164,10 +164,12 @@ class CustomScroll extends React.Component{
 			if(percent < 0) percent = 0 
 			if(percent > 1) percent = 1
 
-			l(percent)
-
+			l('percent :', percent)
+			l('this.state.fullHeight : ', this.state.fullHeight)
 			var elem = this.state.elem
 			elem.scrollTop = this.state.fullHeight * percent
+
+			//l('ele percent : ', elem.scrollTop / this.state.fullHeight)
 
 			this.refreshParameters()
 	}	
