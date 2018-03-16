@@ -185,6 +185,11 @@ function Uprise(element){
 		})
 
 
+		if(uprisesAuto.length){
+			var throttledEmitAutoCheck = throttle(emitAutoCheck, 500)
+			element.addEventListener('scrollTopChange', throttledEmitAutoCheck)
+		}
+
 		//	everything ok
 		return true
 	}
@@ -357,6 +362,8 @@ function Uprise(element){
 		uprises.forEach(item => {
 			item.elem.upriseClear && item.elem.upriseClear()
 		})
+
+		element.removeEventListener('scrollTopChange', throttledEmitAutoCheck)
 
 		uprises = []
 	}

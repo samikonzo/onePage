@@ -3,7 +3,6 @@ import PageStore 	from '../../../stores/PageStore.js'
 import ItemsStore 	from '../../../stores/ItemsStore.js'
 import Uprise 		from '../../etc/uprise.js'
 import CustomScroll from '../../etc/CustomScroll.jsx'
-//import MakeItScroll from '../../etc/makeItScroll.js'
 
 import './Items.less'
 
@@ -25,8 +24,6 @@ class Items extends React.Component{
 		this._showContent 			= this._showContent.bind(this)
 		this._hideContent 			= this._hideContent.bind(this)
 		this._itemsChange 			= this._itemsChange.bind(this)
-		//this.handleScrollTopAdd		= this.handleScrollTopAdd.bind(this)
-		//this.handleScrollTopChange 	= this.handleScrollTopChange.bind(this)
 	}
 
 	componentDidMount(){
@@ -36,18 +33,12 @@ class Items extends React.Component{
 
 		
 		this.elem.wheelBuzy = true;
-		/*this.scroll = MakeItScroll(this.elem, this.handleScrollTopAdd)
-
-		this.setState({
-			scrollHeight : this.elem.scrollHeight
-		})*/
 	}
 
 	componentWillUnmount(){
 		PageStore.removePageChangeListener(this._hideContent)
 		ItemsStore.removeItemChangeListener(this._itemsChange)
 		this.uprise.clear()
-		//this.scroll.clear()
 	}
 
 	_showContent(){
@@ -64,30 +55,6 @@ class Items extends React.Component{
 
 	}
 
-	/*handleScrollTopAdd(addScroll){
-		var prevScroll = this.state.scroll
-		var nextScroll = prevScroll + addScroll
-		var maxScroll = this.elem.scrollHeight - this.elem.offsetHeight
-
-		if(nextScroll < 0) nextScroll = 0
-		if(nextScroll > maxScroll) nextScroll = maxScroll
-
-		this.setState({
-			scroll: nextScroll,
-			scrollPercent: nextScroll / maxScroll
-		})
-	}
-
-	handleScrollTopChange(nextPercent){
-		var maxScroll = this.elem.scrollHeight - this.elem.offsetHeight
-		var nextScroll = nextPercent * maxScroll
-
-		this.setState({
-			scroll: nextScroll,
-			scrollPercent: nextPercent
-		})
-	}
-*/
 
 	render(){
 		var scrollableElem

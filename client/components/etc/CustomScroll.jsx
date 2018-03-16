@@ -10,6 +10,7 @@ import './CustomScroll.less'
 	2) change size of scroll to relative element visible part to element scrollHeight
 	2.1) min and max size of scroll
 	3) resize changing
+	4) scroll bottom event
 
 		ISSUE 
 	1) when away from page scrolling to top
@@ -62,8 +63,6 @@ class CustomScroll extends React.Component{
 	}
 
 	componentWillReceiveProps(nextProps){
-		l('NEW PROPS', nextProps)
-
 		if(!this.state.elem){
 			this.setState({
 				elem : nextProps.elem
@@ -105,88 +104,105 @@ class CustomScroll extends React.Component{
 		var elem = this.state.elem
 
 		var fullHeight 		= elem.scrollHeight	
+		var visibleHeight 	= elem.offsetHeight
 		var scrollTop 		= elem.scrollTop
 		var scrollPercent 	= elem.scrollTop / (elem.scrollHeight - elem.offsetHeight)
 		if(scrollPercent > 1) scrollPercent = 1
 		if(scrollPercent < 0) scrollPercent = 0
 		
 		var wrapperTop 					= scrollTop
-		var wrapperHeight 				= elem.offsetHeight
+		var wrapperHeight 				= visibleHeight
 		var wrapperComputedStyle 		= getComputedStyle(this.wrapper)
 		var wrapperBorderWidthTop 		= parseInt(wrapperComputedStyle.borderTopWidth)
 		var wrapperBorderWidthBottom 	= parseInt(wrapperComputedStyle.borderBottomWidth)
 		var wrapperAvailableHeight 		= wrapperHeight - (wrapperBorderWidthTop + wrapperBorderWidthBottom)
 
-		var scrollCursorHeight	= (wrapperAvailableHeight / fullHeight) * 100
+		var scrollCursorHeight	= (wrapperAvailableHeight / fullHeight) * wrapperHeight
+
+		// a lot of questions to this
+		var scrollCursorIsFull = ( +(wrapperAvailableHeight / fullHeight).toFixed(1) == 1) ? true : false
+
 		var scrollCursorTop 	= scrollPercent * (elem.offsetHeight - scrollCursorHeight)
 		var scrollCursorTopMax 	= wrapperAvailableHeight - scrollCursorHeight
 		if(scrollCursorTop > scrollCursorTopMax){
 			scrollCursorTop = scrollCursorTopMax
 		}
 
-
-
+		//l(wrapperAvailableHeight / fullHeight, scrollCursorIsFull)
 
 		this.setState({
-			fullHeight : fullHeight,
-			scrollTop : scrollTop,
-			wrapperTop : wrapperTop,
-			wrapperHeight : wrapperHeight,
-			wrapperAvailableHeight: wrapperAvailableHeight,
-			scrollCursorHeight : scrollCursorHeight,
-			scrollCursorTop : scrollCursorTop,
+			fullHeight 				: fullHeight,
+			visibleHeight 			: visibleHeight,
+			scrollTop 				: scrollTop,
+			wrapperTop 				: wrapperTop,
+			wrapperHeight 			: wrapperHeight,
+			wrapperAvailableHeight	: wrapperAvailableHeight,
+			scrollCursorHeight 		: scrollCursorHeight,
+			scrollCursorIsFull 		: scrollCursorIsFull,
+			scrollCursorTop 		: scrollCursorTop,
+		}, function(){
+			// emit elem change event
+			var widgetEvent = new CustomEvent('scrollTopChange', {
+				bubbles: true
+			})
+
+			this.state.elem.dispatchEvent(widgetEvent)
 		})
 	}
 
 
 	// scrollCursorMove
+
 	handleScrollCursorDown(e){
 		var offsetY = e.offsetY
 
 		this.setState({
 			scrollCursorDragged: true,
 			scrollCursorDraggedOffset: offsetY,
+			mouseDownTime: performance.now()
 		})
 
-		l('mousedown')
+
+		//this.refreshParameters()
 	}
 
 	handleScrollCursorMove(e){
-		if(!this.state.scrollCursorDragged) return
+		if(!this.state.scrollCursorDragged){
+			return
+		}
 
-			//change elem.scroll.top
+		
+		var wrapperBoundingTop = this.wrapper.getBoundingClientRect().top
+		var distanceFromTop = e.clientY - this.state.scrollCursorDraggedOffset
+		var difference = distanceFromTop - wrapperBoundingTop
+		var percent = difference / (this.state.wrapperAvailableHeight - this.state.scrollCursorHeight)
 
-			var wrapperBoundingTop = this.wrapper.getBoundingClientRect().top
-			var distanceFromTop = e.clientY - this.state.scrollCursorDraggedOffset
-			var difference = distanceFromTop - wrapperBoundingTop
-			var percent = difference / (this.state.wrapperAvailableHeight - this.state.scrollCursorHeight)
+		if(percent < 0) percent = 0 
+		if(percent > 1) percent = 1
 
-			if(percent < 0) percent = 0 
-			if(percent > 1) percent = 1
+		var elem = this.state.elem
+		elem.scrollTop = (this.state.fullHeight - this.state.visibleHeight) * percent
 
-			l('percent :', percent)
-			l('this.state.fullHeight : ', this.state.fullHeight)
-			var elem = this.state.elem
-			elem.scrollTop = this.state.fullHeight * percent
-
-			//l('ele percent : ', elem.scrollTop / this.state.fullHeight)
-
-			this.refreshParameters()
+		this.refreshParameters()
 	}	
 
 	handleScrollCursorUp(e){
 		if(!this.state.scrollCursorDragged) return
+
+
 		this.setState({
 			scrollCursorDragged: false
 		})	
 
-		l('mouseup')
+		//this.refreshParameters()
 	}
 
 
 
 	render(){
 		var state = this.state
+
+		if(this.state.scrollCursorDragged && this.state.elem) this.state.elem.style.userSelect = 'none'
 
 		if(this.state.binded){
 
@@ -202,13 +218,19 @@ class CustomScroll extends React.Component{
 				cursorS.height = state.scrollCursorHeight + 'px'
 			}
 
+
 		}
 
+		var wrapperClass='CustomScroll__wrapper '
+		if(this.state.scrollCursorIsFull) wrapperClass += 'CustomScroll__wrapper--hidden '
+		
 		var scrollCursorClass = 'CustomScroll__scroll-cursor '
-		if(this.state.scrollCursorDragged) scrollCursorClass += 'CustomScroll__scroll-cursor--dragged'
+		if(this.state.scrollCursorDragged) scrollCursorClass += 'CustomScroll__scroll-cursor--dragged '
+
+
 
 		return (
-			<div className="CustomScroll__wrapper" ref={elem => this.wrapper = elem}>
+			<div className={wrapperClass} ref={elem => this.wrapper = elem}>
 				<div className={scrollCursorClass} ref={elem => this.scrollCursor = elem}></div> 
 			</div>
 		)

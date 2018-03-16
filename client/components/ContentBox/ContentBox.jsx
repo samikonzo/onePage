@@ -7,10 +7,11 @@ import PageStore			from '../../stores/PageStore.js'
 import './ContentBox.less'
 
 //	pages 
-import Home from './pages/Home.jsx'
-import Items from './pages/Items.jsx'
+import Home 	from './pages/Home.jsx'
+import Items 	from './pages/Items.jsx'
 import Contacts from './pages/Contacts.jsx'
-import Page404 from './pages/Page404.jsx'
+import News 	from './pages/News.jsx'
+import Page404 	from './pages/Page404.jsx'
 
 const l = console.log;
 
@@ -101,6 +102,16 @@ class ContentBox extends React.Component{
 							)
 						}
 					}/>
+
+					<Route path='/news' render={ (props) => {
+							return(
+								<News {...props}
+									ref={item => this.currentOpen = item} 
+								/>
+							)
+						}
+					}/>
+
 
 					<Route path='/:url' component={Page404}/>
 

@@ -3,12 +3,7 @@ App.jsx
 1)	if scroll active for page changing, there must be 
 	icon or blinking symbol
 
-
-Custom Scroll
-
-1) create Scroll
-2) drag and drop scroll
-3) change scroll position only over change scroll top props
+2) Loading screen at contentBox with gif/loading animation
 
 
 Pages 

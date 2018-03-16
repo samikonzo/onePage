@@ -21,6 +21,12 @@
 		"name" 		: "Information",
 		"href" 		: "/information",
 		"component" : "Information"
+	},
+
+	{
+		"name" 		: "News",
+		"href" 		: "/news",
+		"component" : "News"
 	}
 	
 ]
