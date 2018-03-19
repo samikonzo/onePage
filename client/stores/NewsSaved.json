@@ -1,26 +1,4 @@
-{
-  "rss": {
-    "channel": {
-      "language": "ru",
-      "title": "Lenta.ru : Новости",
-      "description": "Новости, статьи, фотографии, видео. Семь дней в неделю, 24 часа в сутки",
-      "link": [
-        "https://lenta.ru",
-        {
-          "_rel": "self",
-          "_type": "application/rss+xml",
-          "_href": "http://lenta.ru/rss",
-          "__prefix": "atom"
-        }
-      ],
-      "image": {
-        "url": "https://assets.lenta.ru/small_logo.png",
-        "title": "Lenta.ru",
-        "link": "https://lenta.ru",
-        "width": "134",
-        "height": "22"
-      },
-      "item": [
+[
         {
           "guid": "https://lenta.ru/news/2018/03/16/vrag/",
           "title": "Савченко признали врагом Украины",
@@ -3016,9 +2994,4 @@
           },
           "category": "Интернет и СМИ"
         }
-      ]
-    },
-    "_xmlns:atom": "http://www.w3.org/2005/Atom",
-    "_version": "2.0"
-  }
-}
+]

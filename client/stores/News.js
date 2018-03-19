@@ -15,7 +15,7 @@ function News(){
 
 		setTimeout(() => {
 			resolve(NewsSaved)
-		}, 5000)
+		}, 10)
 
 		/*var xhr = new XMLHttpRequest()
 		xhr.open('GET','https://lenta.ru/rss')

@@ -429,7 +429,6 @@ function Uprise(element){
 	}
 
 	function bindAutoShow(elem){
-
 		uprisesAuto.push(elem)
 
 		document.addEventListener('wheel', upriseCheckEvent)
@@ -488,8 +487,20 @@ function Uprise(element){
 			//l(elTop, ' : ', elBottom, '  |  ', parentTop, ' : ', parentBottom)
 
 
-
 			if(!elem.upriseShowed){
+
+				l('check : ')
+				l('elTop - scrollHeight < parentBottom : ', elTop - scrollHeight < parentBottom)
+				l('elBottom : ', elBottom)
+				l('scrollHeight : ', scrollHeight)
+				l('elTop - scrollHeight : ', elTop - scrollHeight)
+				l('parentBottom : ', parentBottom)
+
+				l(elem)
+				l(this.parentElement)
+
+				l(' ')
+				l(' ')
 
 				if( (elTop - scrollHeight < parentBottom &&
 					elBottom - scrollHeight > parentTop + parentTop_elBottom) ||
@@ -497,6 +508,8 @@ function Uprise(element){
 					(elTop - scrollHeight < parentBottom && 
 					elBottom - scrollHeight > parentTop && 
 					elHeight < parentTop_elBottom)) {
+
+					l('elem.upriseShow()')
 
 					elem.upriseShow()
 				} 
@@ -563,6 +576,7 @@ function Uprise(element){
 
 	function emitAutoCheck(parameter){
 		uprisesAuto.forEach( elem => {
+			l('emitAutoCheck')
 			elem.upriseCheck()
 		})
 	}

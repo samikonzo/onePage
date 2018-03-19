@@ -35,7 +35,15 @@ const AppActions = {
 		Dispatcher.dispatch({
 			type : Constants.POP_STATE
 		})
+	},
+
+
+	getNews(){
+		Dispatcher.dispatch({
+			type : Constants.GET_NEWS
+		})
 	}
+
 }
 
 export default AppActions

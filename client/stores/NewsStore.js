@@ -1,19 +1,23 @@
-import { EventEmitter } from 'events'
-import Dispatcher 		from '../dispatcher/AppDispatcher.js'
-import Constants 		from '../constants/AppConstants.js'
-import getNews 			from './News.js'
+import { EventEmitter }		from 'events'
+import Dispatcher 			from '../dispatcher/AppDispatcher.js'
+import Constants 			from '../constants/AppConstants.js'
+import getNewsFromServer 	from './News.js'
 
 
 
-var news
-var loading = true
+var news = []
+var allNews
+var loading = false
+
+const EVENTS = {
+	NEWS_CHANGE : 'NEWS_CHANGE'
+}
 
 
-
-getNews().then(
+getNewsFromServer().then(
 	( xmlNews ) => {
-		l(xmlNews)
-		news = xmlNews
+		allNews = xmlNews
+		l('allNews : ', allNews)
 	},
 	( err ) => l(err)
 )
@@ -22,20 +26,56 @@ getNews().then(
 
 
 
-
-
 Dispatcher.register(function(action){
 	switch(action.type){
-		/*case Constants. : {
+		case Constants.GET_NEWS : {
+			loading = true
+			NewsStore.emitNewsChange()
+
+
+			/*
+				imitation server request
+			*/
+			setTimeout(function(){
+				loading = false
+
+				if(allNews){
+					var newNews = allNews.slice(news.length, news.length + 10)
+					l('newNews : ', newNews)
+
+					news = news.concat( newNews )
+				}
+
+				NewsStore.emitNewsChange()
+			}, 3000)
+
 			break;
-		}*/
+		}
 	}
 })
 
 const NewsStore = Object.assign({}, EventEmitter.prototype, {
-	isLoading(){},
-	//getFirstNews(){},
-	getNews(){}
+	addNewsChangeListener(f){
+		this.on(EVENTS.NEWS_CHANGE, f)
+	},
+
+	removeNewsChangeListener(f){
+		this.removeListener(EVENTS.NEWS_CHANGE, f)
+	},
+
+	emitNewsChange(){
+		this.emit(EVENTS.NEWS_CHANGE)
+	},
+
+
+
+	isLoading(){
+		return loading
+	},
+
+	getNews(){
+		return news
+	}
 })
 
 
