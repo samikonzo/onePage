@@ -16,14 +16,14 @@ class Items extends React.Component{
 
 		this.state = {
 			items : ItemsStore.getItems(),
-			scroll : 0, // px
-			scrollPercent : 0, // from 0 to 1
-			scrollHeight : 0,
+			//scroll : 0, // px
+			//scrollPercent : 0, // from 0 to 1
+			//scrollHeight : 0,
 		}
 
-		this._showContent 			= this._showContent.bind(this)
-		this._hideContent 			= this._hideContent.bind(this)
-		this._itemsChange 			= this._itemsChange.bind(this)
+		this._showContent = this._showContent.bind(this)
+		this._hideContent = this._hideContent.bind(this)
+		this._itemsChange = this._itemsChange.bind(this)
 	}
 
 	componentDidMount(){
@@ -59,11 +59,11 @@ class Items extends React.Component{
 	render(){
 		var scrollableElem
 
-		if(this.elem) {
+		/*if(this.elem) {
 			this.elem.scrollTop = this.state.scroll
 			scrollableElem = this.elem
 		}
-		if(this.uprise) this.uprise.emitCheck(this.state.scroll)
+		if(this.uprise) this.uprise.emitCheck(this.state.scroll)*/
 
 		return (
 			<div ref={elem => this.elem = elem} className="Items"> 
@@ -82,7 +82,7 @@ class Items extends React.Component{
 					})
 				}
 
-				<CustomScroll 	elem={scrollableElem}/>
+				<CustomScroll 	elem={this.elem}/>
 
 			</div>
 		)

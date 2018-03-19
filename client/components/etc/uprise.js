@@ -65,6 +65,8 @@ function Uprise(element){
 	function init(){
 		find()
 
+		//l('init : ')
+		//l(uprises)
 		const init = true
 		hide(init)	
 	}
@@ -90,7 +92,7 @@ function Uprise(element){
 
 			//if element already proccesed by Uprise return undefined
 			if( el.upriseProccessed ){
-				l('element already proccesed by Uprise')
+				//l('element already proccesed by Uprise', el, element)
 				return undefined
 			}
 
@@ -263,8 +265,22 @@ function Uprise(element){
 				};
 			}
 
+			//l(uprises)
 
-			uprises.forEach( item => {
+			uprises.forEach( (item, i) => {
+
+				if(item == undefined){
+					return
+					//l(' ')
+					//l(' ')
+					//l(' NO ITEM!!!')
+					//l(element)
+					//l('i  :', i)
+					//l(uprises[i])
+					//l(uprises)
+					//l(' ')
+					//l(' ')
+				}
 				//l(item)
 
 				var style = item.elem.style
@@ -360,6 +376,8 @@ function Uprise(element){
 		l('clear ')
 		
 		uprises.forEach(item => {
+			if(item == undefined) return
+
 			item.elem.upriseClear && item.elem.upriseClear()
 		})
 
@@ -489,18 +507,16 @@ function Uprise(element){
 
 			if(!elem.upriseShowed){
 
-				l('check : ')
-				l('elTop - scrollHeight < parentBottom : ', elTop - scrollHeight < parentBottom)
-				l('elBottom : ', elBottom)
-				l('scrollHeight : ', scrollHeight)
-				l('elTop - scrollHeight : ', elTop - scrollHeight)
-				l('parentBottom : ', parentBottom)
-
-				l(elem)
-				l(this.parentElement)
-
-				l(' ')
-				l(' ')
+				//l('check : ')
+				//l('elTop - scrollHeight < parentBottom : ', elTop - scrollHeight < parentBottom)
+				//l('elBottom : ', elBottom)
+				//l('scrollHeight : ', scrollHeight)
+				//l('elTop - scrollHeight : ', elTop - scrollHeight)
+				//l('parentBottom : ', parentBottom)
+				//l(elem)
+				//l(this.parentElement)
+				//l(' ')
+				//l(' ')
 
 				if( (elTop - scrollHeight < parentBottom &&
 					elBottom - scrollHeight > parentTop + parentTop_elBottom) ||
@@ -509,7 +525,7 @@ function Uprise(element){
 					elBottom - scrollHeight > parentTop && 
 					elHeight < parentTop_elBottom)) {
 
-					l('elem.upriseShow()')
+					//l('elem.upriseShow()')
 
 					elem.upriseShow()
 				} 
@@ -576,7 +592,7 @@ function Uprise(element){
 
 	function emitAutoCheck(parameter){
 		uprisesAuto.forEach( elem => {
-			l('emitAutoCheck')
+			//l('emitAutoCheck')
 			elem.upriseCheck()
 		})
 	}

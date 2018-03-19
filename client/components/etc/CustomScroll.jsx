@@ -6,10 +6,6 @@ import './CustomScroll.less'
 
 /*
 		TODO
-	1) scroll enable for change scrollTop of this.props.elem
-	2) change size of scroll to relative element visible part to element scrollHeight
-	2.1) min and max size of scroll
-	3) resize changing
 	4) scroll bottom event
 
 		ISSUE 
@@ -31,6 +27,8 @@ class CustomScroll extends React.Component{
 			binded : false,
 		}
 
+
+
 		this.bindScrollableElement 	= this.bindScrollableElement.bind(this)
 		this.handleScrollTopAdd 	= this.handleScrollTopAdd.bind(this)
 		this.handleWindowResize 	= this.handleWindowResize.bind(this)
@@ -38,14 +36,17 @@ class CustomScroll extends React.Component{
 		this.handleScrollCursorDown	= this.handleScrollCursorDown.bind(this)
 		this.handleScrollCursorMove	= this.handleScrollCursorMove.bind(this)
 		this.handleScrollCursorUp	= this.handleScrollCursorUp.bind(this)
+		this.externalRefresh 			= this.refreshParameters.bind(this)
 	}
 
 	componentDidMount(){
 		window.addEventListener('resize', this.handleWindowResize)
 
-		if(this.state.elem && !this.state.binded){
+		/*if(this.state.elem && !this.state.binded){
 			this.bindScrollableElement()
-		}		
+			
+			l(this.state.elem)
+		}	*/	
 
 		this.scrollCursor.addEventListener('mousedown', this.handleScrollCursorDown)
 		document.addEventListener('mousemove', this.handleScrollCursorMove)
@@ -70,6 +71,7 @@ class CustomScroll extends React.Component{
 			}, function() {
 				if(this.state.elem && !this.state.binded){
 					this.bindScrollableElement()
+					this.state.elem.style.paddingRight = '20px';
 				}	
 			})
 		}
@@ -90,9 +92,32 @@ class CustomScroll extends React.Component{
 
 	handleScrollTopAdd(added){
 		var elem = this.state.elem
-		elem.scrollTop += added
+
+		//l(' ')
+		//l('scrollHeight - offsetHeight : ', elem.scrollHeight - elem.offsetHeight)
+		//l('scrollTop : ', elem.scrollTop)
+		//l('added : ', added)
+		//l('top + added > height', elem.scrollTop + added > elem.scrollHeight - elem.offsetHeight)
+
+		if(elem.scrollTop + added > elem.scrollHeight - elem.offsetHeight){
+			elem.scrollTop = elem.scrollHeight - elem.offsetHeight
+		} else {
+			elem.scrollTop += added
+		}
+ 	
+
 
 		var scrollPercent = elem.scrollTop / (elem.scrollHeight - elem.offsetHeight)
+		if(elem.scrollHeight == elem.offsetHeight) scrollPercent = 0
+
+
+		//l(' ')
+		//l(' ')
+		//l('elem.scrollTop :',elem.scrollTop)
+		//l('elem.scrollHeight :',elem.scrollHeight )
+		//l('elem.offsetHeight :', elem.offsetHeight)
+		//l('scrollPercent : ', scrollPercent)
+
 		this.refreshParameters()
 	}
 
@@ -107,6 +132,7 @@ class CustomScroll extends React.Component{
 		var visibleHeight 	= elem.offsetHeight
 		var scrollTop 		= elem.scrollTop
 		var scrollPercent 	= elem.scrollTop / (elem.scrollHeight - elem.offsetHeight)
+		if(elem.scrollHeight == elem.offsetHeight) scrollPercent = 0
 		if(scrollPercent > 1) scrollPercent = 1
 		if(scrollPercent < 0) scrollPercent = 0
 		
@@ -120,15 +146,25 @@ class CustomScroll extends React.Component{
 		var scrollCursorHeight	= (wrapperAvailableHeight / fullHeight) * wrapperHeight
 
 		// a lot of questions to this
-		var scrollCursorIsFull = ( +(wrapperAvailableHeight / fullHeight).toFixed(1) == 1) ? true : false
+		var scrollCursorIsFull = ( +(wrapperAvailableHeight / fullHeight).toFixed(2) == 1) ? true : false
 
 		var scrollCursorTop 	= scrollPercent * (elem.offsetHeight - scrollCursorHeight)
 		var scrollCursorTopMax 	= wrapperAvailableHeight - scrollCursorHeight
-		if(scrollCursorTop > scrollCursorTopMax){
+		if(Math.ceil(scrollCursorTop) >= Math.ceil(scrollCursorTopMax) - 10){
 			scrollCursorTop = scrollCursorTopMax
+			var scrollBottom = true
+		} else {
+			var scrollBottom = false
 		}
 
 		//l(wrapperAvailableHeight / fullHeight, scrollCursorIsFull)
+
+
+		//l('scrollPercent : ', scrollPercent)
+		//l('elem.offsetHeight : ', elem.offsetHeight)
+		//l('scrollCursorHeight : ', scrollCursorHeight)
+		l(Math.ceil(scrollCursorTop), Math.ceil(scrollCursorTopMax))
+		//l(' ')
 
 		this.setState({
 			fullHeight 				: fullHeight,
@@ -140,13 +176,27 @@ class CustomScroll extends React.Component{
 			scrollCursorHeight 		: scrollCursorHeight,
 			scrollCursorIsFull 		: scrollCursorIsFull,
 			scrollCursorTop 		: scrollCursorTop,
+			scrollBottom 			: scrollBottom,
+
 		}, function(){
 			// emit elem change event
-			var widgetEvent = new CustomEvent('scrollTopChange', {
+			var scrollTopEvent = new CustomEvent('scrollTopChange', {
 				bubbles: true
 			})
 
-			this.state.elem.dispatchEvent(widgetEvent)
+			this.state.elem.dispatchEvent(scrollTopEvent)
+
+			if(this.state.scrollBottom){
+				var scrollBottomEvent = new CustomEvent('scrollBottom', {
+					bubbles: true
+				})
+
+				l(' SCROLL BOTTOM ')
+				
+				setTimeout(() => {
+					this.state.elem.dispatchEvent(scrollBottomEvent)
+				}, 100)
+			}
 		})
 	}
 

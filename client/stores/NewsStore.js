@@ -1,26 +1,31 @@
 import { EventEmitter }		from 'events'
 import Dispatcher 			from '../dispatcher/AppDispatcher.js'
 import Constants 			from '../constants/AppConstants.js'
-import getNewsFromServer 	from './News.js'
+import getNewsFromServer 	from './NewsGet.js'
 
 
 
 var news = []
-var allNews
+var newsClientHas = []
 var loading = false
+
 
 const EVENTS = {
 	NEWS_CHANGE : 'NEWS_CHANGE'
 }
 
 
-getNewsFromServer().then(
+/*getNewsFromServer().then(
 	( xmlNews ) => {
 		allNews = xmlNews
 		l('allNews : ', allNews)
 	},
 	( err ) => l(err)
 )
+*/
+
+
+
 
 
 
@@ -29,25 +34,35 @@ getNewsFromServer().then(
 Dispatcher.register(function(action){
 	switch(action.type){
 		case Constants.GET_NEWS : {
+			if(loading) return
 			loading = true
 			NewsStore.emitNewsChange()
 
+			var count = action.count || 5
 
-			/*
-				imitation server request
-			*/
-			setTimeout(function(){
+			if(news.length < newsClientHas.length + count){
+				getNewsFromServer(news.length).then(
+					data => { 
+						//l(data)	
+						news = news.concat(data)
+						newsClientHas = newsClientHas.concat( news.slice(newsClientHas.length, newsClientHas.length + count) )
+						loading = false
+						NewsStore.emitNewsChange()
+					},
+
+					err => { 
+						//l(err.text) 
+						loading = false			
+						NewsStore.emitNewsChange()
+					}
+				)
+			} else {
+				//l(' ENOUGHT ')
+				newsClientHas = newsClientHas.concat( news.slice(newsClientHas.length, newsClientHas.length + count) )
 				loading = false
-
-				if(allNews){
-					var newNews = allNews.slice(news.length, news.length + 10)
-					l('newNews : ', newNews)
-
-					news = news.concat( newNews )
-				}
-
 				NewsStore.emitNewsChange()
-			}, 3000)
+
+			}
 
 			break;
 		}
@@ -74,7 +89,11 @@ const NewsStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	getNews(){
-		return news
+		return newsClientHas
+	},
+
+	clearClientHas(){
+		newsClientHas = []
 	}
 })
 

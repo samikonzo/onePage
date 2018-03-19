@@ -38,9 +38,10 @@ const AppActions = {
 	},
 
 
-	getNews(){
+	getNews(count){
 		Dispatcher.dispatch({
-			type : Constants.GET_NEWS
+			type : Constants.GET_NEWS,
+			count: count,
 		})
 	}
 

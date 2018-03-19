@@ -8,13 +8,14 @@ class NewsItem extends React.Component{
 		super(props)
 
 		this.state = {
-			guid  		:this.props.guid ,
-			category 	:this.props.category,
-			description :this.props.description,
-			enclosure 	:this.props.enclosure,
-			limk 		:this.props.limk,
-			pubDate 	:this.props.pubDate,
-			title 		:this.props.title,
+			guid  		: this.props.item.guid ,
+			category 	: this.props.item.category,
+			description : this.props.item.description,
+			enclosure 	: this.props.item.enclosure,
+			link 		: this.props.item.link,
+			pubDate 	: this.props.item.pubDate,
+			title 		: this.props.item.title,
+			delay 		: this.props.delay,
 		}
 
 
@@ -22,8 +23,10 @@ class NewsItem extends React.Component{
 		this._hideContent = this._hideContent.bind(this)
 	}
 
+
+
 	componentDidMount(){
-		this.uprise = Uprise(this.elem)
+		this.uprise = Uprise(this.elem.parentElement)
 	}
 
 	componentWillUnmount(){
@@ -39,9 +42,11 @@ class NewsItem extends React.Component{
 
 
 	render(){
+		var className = `NewsItem uprise--right uprise--delay${this.state.delay} uprise--auto `
+
 		return (
-			<div ref={elem=>this.elem=elem} className="NewsItem"> 
-				<p className="uprise--right uprise--delay3 uprise--auto"> {this.state.title} </p>
+			<div ref={elem=>this.elem=elem} className={className}> 
+				<p> {this.state.title} </p>
 			</div>
 		)
 	}

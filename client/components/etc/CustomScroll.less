@@ -1,13 +1,13 @@
 .CustomScroll__wrapper{
 	border: 0px solid;
-	width: 40px;
+	width: 20px;
 	box-sizing: border-box;
 
 	position: absolute;
 	right: 0;
 	top: 0;
 
-	border: 1px solid grey;
+	border-left: 1px solid rgba(193, 193, 193, 0.7);
 	overflow: hidden;
 
 
@@ -24,12 +24,13 @@
 .CustomScroll__scroll-cursor{
 	position: absolute;
 	left: 0;
-	border: 1px solid red;
+	border: 1px solid rgb(193, 193, 193);
+	background: rgb(193, 193, 193);
 	width: 100%;
 	box-sizing: border-box;
 
 	&--dragged{
-		background: green;
+		background: darken(rgb(193, 193, 193), 10%);
 	}
 }
 

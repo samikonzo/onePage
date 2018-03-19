@@ -10,11 +10,28 @@ import Loading 		from '../../etc/Loading.jsx'
 import './News.less'
 
 
+/*
+	News 
+
+	didmount => load first 10 news, one by one
+	request to store (10 news for one request)
+	store check downloaded from server, if no news, then try to download news
+	
+
+	hide news after loading more than ~20
+
+*/
+
+const NewsCountPerRequest = 1
+
+
 function getStateFromFlux(){
-	return{
+	var fluxData = {
 		isLoading 	: NewsStore.isLoading(),
 		news 		: NewsStore.getNews()
 	}
+
+	return fluxData
 }
 
 
@@ -22,75 +39,80 @@ class News extends React.Component{
 	constructor(props){
 		super(props)
 
-		this.state = getStateFromFlux()
+		this.state = Object.assign({
+			listeners : {},
+		}, getStateFromFlux(),)
 
-		this._showContent 		= this._showContent.bind(this)
+
 		this._hideContent 		= this._hideContent.bind(this)
-		this.handleNewsRequest 	= this.handleNewsRequest.bind(this)
 		this._newsRefresh 		= this._newsRefresh.bind(this)
+		this._handleNewsRequest = this._handleNewsRequest.bind(this)
+		this._emitListeners		= this._emitListeners.bind(this)
 	}
 
 	componentDidMount(){
-		this.uprise = Uprise(this.elem)
-
-		this.handleNewsRequest()
-
-
-		this.elem.wheelBuzy = true
-		this.elem.addEventListener('scrollBottom', this.handleNewsRequest)
+		//l('componentDidMount')
 
 		PageStore.addPageChangeListener(this._hideContent)
 		NewsStore.addNewsChangeListener(this._newsRefresh)
 
-		this._showContent()
+		this.elem.wheelBuzy = true  // disable page changing by mwheel
+
+		this.elem.addEventListener('scrollBottom', this._handleNewsRequest) // emit first _handeNewsRequest
 	}
 
 	componentWillUnmount(){
 		PageStore.removePageChangeListener(this._hideContent)
 		NewsStore.removeNewsChangeListener(this._newsRefresh)
+		this.elem.removeEventListener('scrollBottom', this._handleNewsRequest)
+		NewsStore.clearClientHas()
 	}
+
 	componentWillReceiveProps(nextProps){}
 
 
-	_showContent(){}
+
 	_hideContent(){
 		return new Promise((resolve, reject) => {
 			resolve()
 		})
 	}
+
+	_handleNewsRequest(){
+		//l('_handleNewsRequest')
+		AppActions.getNews(NewsCountPerRequest)
+	}
+
 	_newsRefresh(){
-		this.setState(getStateFromFlux())
+		this.setState(getStateFromFlux(), this._emitListeners)
 	}
 
-	handleNewsRequest(){
-		AppActions.getNews()
-		/*var news = this.state.news
-		var newNews = AppActions.getNews()
-
-		this.setState({
-			news : news.concat(newNews)
-		})*/
-
+	_emitListeners(){
+		for(var item in this.state.listeners){
+			var elem = this.state.listeners[item]
+			if(elem.externalRefresh) elem.externalRefresh()
+		}
 	}
-
 
 	render(){
 		return(
 
-			<div ref={elem => this.elem =elem} className="NewsGrid">
-				{this.state.news.map( (item, i) => {
+			<div ref={elem => this.elem = elem} className="NewsGrid">
+				{this.state.news && this.state.news.map( (item, i) => {
 					return (
-						<NewsItem key={i} item={item}/>
+						<NewsItem key={i} item={item} delay={i%NewsCountPerRequest}/>
 					)
 				})}
 
 				<Loading showed={this.state.isLoading}/>
 
-				<CustomScroll elem={this.elem} />
+				<CustomScroll elem={this.elem} ref={elem => this.state.listeners.CustomScroll = elem}/>
 			</div>
 		)
 	}
 }
+
+
 
 
 export default News
