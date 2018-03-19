@@ -22,7 +22,7 @@ import './News.less'
 
 */
 
-const NewsCountPerRequest = 1
+const NewsCountPerRequest = 3
 
 
 function getStateFromFlux(){

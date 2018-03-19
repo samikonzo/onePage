@@ -6,7 +6,8 @@ import './CustomScroll.less'
 
 /*
 		TODO
-	4) scroll bottom event
+	4) scroll bottom event bounce!
+
 
 		ISSUE 
 	1) when away from page scrolling to top
