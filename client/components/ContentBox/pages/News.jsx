@@ -100,7 +100,7 @@ class News extends React.Component{
 			<div ref={elem => this.elem = elem} className="NewsGrid">
 				{this.state.news && this.state.news.map( (item, i) => {
 					return (
-						<NewsItem key={i} item={item} delay={i%NewsCountPerRequest}/>
+						<NewsItem key={i} item={item} delay={3}/>
 					)
 				})}
 
