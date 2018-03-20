@@ -9,7 +9,10 @@
 		text-align: center;
 		height: 140px;
 		opacity: 1;
-		display: block
+		
+		display: flex;
+		flex-flow: column;
+		justify-content: center;
 	}
 
 
@@ -24,9 +27,10 @@
 	}
 
 	& li{
-		width: 10px;
-		height: 5px;
-		margin: 10px;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		margin: 5px;
 		background: grey;
 
 		animation : blink 2s infinite alternate;
@@ -45,7 +49,8 @@
 
 @keyframes blink{
 	from{
-		opacity: 0;
+		//opacity: 0;
+		background: lightgrey;
 		transform: translate(0,0);
 	}
 
@@ -54,8 +59,9 @@
 	}
 
 	50%{
-		opacity: 1;
-		transform: translate(0,10px);
+		background: grey;
+		//opacity: 1;
+		transform: translate(0,-10px);
 	}
 
 	60%{
@@ -63,6 +69,7 @@
 	}
 
 	to{
-		opacity: 0;
+		background: lightgrey;
+		//opacity: 0;
 	}
 }

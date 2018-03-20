@@ -3,7 +3,9 @@
 	TODO : Setup server connection
 
 */
-import NewsSaved from './NewsSaved.json'
+import NewsSavedJSON from './NewsSaved.json'
+
+var NewsSaved = NewsSavedJSON.slice(0, 4)
 
 const l = console.log;
 const divider = 7;
@@ -16,9 +18,9 @@ export default function(currentCount){
 
 			//l('currentCount : ', currentCount)
 			//l('divider : ', divider)
-			//l('pack : ', pack)
+			l('pack : ', pack)
 
-			if(pack){
+			if(pack && pack.length){
 				resolve(pack)	
 			} else {
 				var err = new Error
@@ -26,6 +28,6 @@ export default function(currentCount){
 				reject(err)
 			}
 
-		}, 5000)
+		}, 1100)
 	})
 }

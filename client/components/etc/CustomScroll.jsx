@@ -1,6 +1,7 @@
-import React 		from 'react'
+import React 			from 'react'
 import makeItScrollable from './makeItScrollable.js'
-
+//import throttle 		from './throttle.js'
+import bounce 			from './bounce.js'
 
 import './CustomScroll.less'
 
@@ -30,14 +31,16 @@ class CustomScroll extends React.Component{
 
 
 
-		this.bindScrollableElement 	= this.bindScrollableElement.bind(this)
-		this.handleScrollTopAdd 	= this.handleScrollTopAdd.bind(this)
-		this.handleWindowResize 	= this.handleWindowResize.bind(this)
-		this.refreshParameters 		= this.refreshParameters.bind(this)
-		this.handleScrollCursorDown	= this.handleScrollCursorDown.bind(this)
-		this.handleScrollCursorMove	= this.handleScrollCursorMove.bind(this)
-		this.handleScrollCursorUp	= this.handleScrollCursorUp.bind(this)
+		this.bindScrollableElement 		= this.bindScrollableElement.bind(this)
+		this.handleScrollTopAdd 		= this.handleScrollTopAdd.bind(this)
+		this.handleWindowResize 		= this.handleWindowResize.bind(this)
+		this.refreshParameters 			= this.refreshParameters.bind(this)
+		this.handleScrollCursorDown		= this.handleScrollCursorDown.bind(this)
+		this.handleScrollCursorMove		= this.handleScrollCursorMove.bind(this)
+		this.handleScrollCursorUp		= this.handleScrollCursorUp.bind(this)
 		this.externalRefresh 			= this.refreshParameters.bind(this)
+		this.scrollBottomEvent 			= this.scrollBottomEvent.bind(this)
+		this.bouncedScrollBottomEvent 	= bounce(this.scrollBottomEvent, 2000)
 	}
 
 	componentDidMount(){
@@ -164,7 +167,7 @@ class CustomScroll extends React.Component{
 		//l('scrollPercent : ', scrollPercent)
 		//l('elem.offsetHeight : ', elem.offsetHeight)
 		//l('scrollCursorHeight : ', scrollCursorHeight)
-		l(Math.ceil(scrollCursorTop), Math.ceil(scrollCursorTopMax))
+		//l(Math.ceil(scrollCursorTop), Math.ceil(scrollCursorTopMax))
 		//l(' ')
 
 		this.setState({
@@ -188,19 +191,22 @@ class CustomScroll extends React.Component{
 			this.state.elem.dispatchEvent(scrollTopEvent)
 
 			if(this.state.scrollBottom){
-				var scrollBottomEvent = new CustomEvent('scrollBottom', {
-					bubbles: true
-				})
-
-				l(' SCROLL BOTTOM ')
-				
 				setTimeout(() => {
-					this.state.elem.dispatchEvent(scrollBottomEvent)
-				}, 100)
-			}
+					this.bouncedScrollBottomEvent()
+				}, 100) // timer in order to avoid multiple dispatcher execution 
+				
+			}	
 		})
 	}
 
+	scrollBottomEvent(){
+		//l('scrollBottomEvent')
+
+		var scrollBottomEvent = new CustomEvent('scrollBottom', {
+			bubbles: true
+		})
+		this.state.elem.dispatchEvent(scrollBottomEvent)
+	}
 
 	// scrollCursorMove
 
@@ -213,8 +219,6 @@ class CustomScroll extends React.Component{
 			mouseDownTime: performance.now()
 		})
 
-
-		//this.refreshParameters()
 	}
 
 	handleScrollCursorMove(e){

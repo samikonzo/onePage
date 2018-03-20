@@ -8,6 +8,7 @@ import getNewsFromServer 	from './NewsGet.js'
 var news = []
 var newsClientHas = []
 var loading = false
+var noNews = false
 
 
 const EVENTS = {
@@ -24,7 +25,9 @@ const EVENTS = {
 )
 */
 
-
+var noNewsCap = {
+	title: 'no news, please try later'
+}
 
 
 
@@ -40,10 +43,16 @@ Dispatcher.register(function(action){
 
 			var count = action.count || 5
 
+			// if not enought news => download from server
 			if(news.length < newsClientHas.length + count){
 				getNewsFromServer(news.length).then(
 					data => { 
 						//l(data)	
+						if(noNews){
+							newsClientHas.lenght = newsClientHas.length - 1
+							noNews = false
+						}
+
 						news = news.concat(data)
 						newsClientHas = newsClientHas.concat( news.slice(newsClientHas.length, newsClientHas.length + count) )
 						loading = false
@@ -52,16 +61,23 @@ Dispatcher.register(function(action){
 
 					err => { 
 						//l(err.text) 
+
+						if(!noNews) {
+							noNews = true
+							newsClientHas.push(noNewsCap)
+							
+						}
+
 						loading = false			
 						NewsStore.emitNewsChange()
 					}
 				)
 			} else {
+
 				//l(' ENOUGHT ')
 				newsClientHas = newsClientHas.concat( news.slice(newsClientHas.length, newsClientHas.length + count) )
 				loading = false
 				NewsStore.emitNewsChange()
-
 			}
 
 			break;

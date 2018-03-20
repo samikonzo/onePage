@@ -33,11 +33,8 @@ class Loading extends React.Component{
 
 		return(
 			<div className={loadingClassName} ref={elem => this.elem = elem}> 
-				<ul>
-					<li></li>
-					<li></li>
-					<li></li>
-				</ul>
+			   
+				<ul> <li></li>	<li></li> <li></li>	</ul>
 			</div>
 		)
 	}

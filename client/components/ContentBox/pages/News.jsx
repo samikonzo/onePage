@@ -22,7 +22,7 @@ import './News.less'
 
 */
 
-const NewsCountPerRequest = 3
+const NEWS_COUNT_PER_REQUEST = 4
 
 
 function getStateFromFlux(){
@@ -80,7 +80,7 @@ class News extends React.Component{
 
 	_handleNewsRequest(){
 		//l('_handleNewsRequest')
-		AppActions.getNews(NewsCountPerRequest)
+		AppActions.getNews(NEWS_COUNT_PER_REQUEST)
 	}
 
 	_newsRefresh(){

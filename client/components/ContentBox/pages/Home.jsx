@@ -1,7 +1,7 @@
 import React 		from 'react'
-import Uprise 		from '../../etc/uprise.js'
 import PageStore 	from '../../../stores/PageStore.js'
 import DelayLink 	from '../../etc/DelayLink.jsx'
+import Uprise 		from '../../etc/uprise.js'
 import './Home.less'
 
 
@@ -56,7 +56,7 @@ class Home extends React.Component{
 			 		<p className="uprise--right uprise--delay4 ">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, iure? </p>
 				</main>
 
-				<footer className="uprise--up uprise--delay1 " >  
+				<footer className="uprise--up uprise--delay1 " ref={elem => this.footer = elem}>  
 					<p className="uprise--right uprise--delay5 uprise--length20 uprise--time10"> some foot here! </p>
 				</footer>
 				
