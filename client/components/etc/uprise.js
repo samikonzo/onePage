@@ -470,6 +470,7 @@ function Uprise(element){
 		}
 
 		elem.upriseCheck = function(e){
+			if(!this) return
 			//l('elem.upriseCheck')
 			const SCROLL_HEIGHT = 100
 

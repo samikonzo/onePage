@@ -39,6 +39,9 @@ Dispatcher.register(function(action){
 		case Constants.GET_NEWS : {
 			if(loading) return
 			loading = true
+
+			noNews = false
+
 			NewsStore.emitNewsChange()
 
 			var count = action.count || 5
@@ -48,13 +51,10 @@ Dispatcher.register(function(action){
 				getNewsFromServer(news.length).then(
 					data => { 
 						//l(data)	
-						if(noNews){
-							newsClientHas.lenght = newsClientHas.length - 1
-							noNews = false
-						}
 
 						news = news.concat(data)
 						newsClientHas = newsClientHas.concat( news.slice(newsClientHas.length, newsClientHas.length + count) )
+						noNews = false
 						loading = false
 						NewsStore.emitNewsChange()
 					},
@@ -62,12 +62,8 @@ Dispatcher.register(function(action){
 					err => { 
 						//l(err.text) 
 
-						if(!noNews) {
-							noNews = true
-							newsClientHas.push(noNewsCap)
-							
-						}
 
+						noNews = true
 						loading = false			
 						NewsStore.emitNewsChange()
 					}
