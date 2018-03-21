@@ -9,3 +9,23 @@
 	position: relative;
 	overflow: hidden;
 }
+
+.noNews{
+	overflow: hidden;
+	transition:1s;
+	opacity: 1;
+	//display: none;
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+	width: 100%;
+	line-height: 140px;
+	text-align: center;
+	height: 140px;
+
+	&--hidden{
+		opacity: 0;
+		line-height: 0px;
+		height: 0px;
+	}
+}

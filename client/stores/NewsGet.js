@@ -5,10 +5,12 @@
 */
 import NewsSavedJSON from './NewsSaved.json'
 
-var NewsSaved = NewsSavedJSON.slice(0, 4)
+var NewsSaved = NewsSavedJSON.slice(0)
 
 const l = console.log;
-const divider = 7;
+const divider = 2;
+
+var canSendSomeNews = true
 
 
 export default function(currentCount){
@@ -16,18 +18,22 @@ export default function(currentCount){
 		setTimeout(() => {
 			var pack = NewsSaved.slice(currentCount, currentCount + divider)
 
-			//l('currentCount : ', currentCount)
-			//l('divider : ', divider)
 			l('pack : ', pack)
 
-			if(pack && pack.length){
+			if(pack && pack.length && canSendSomeNews){
 				resolve(pack)	
+
+				canSendSomeNews = false
+				setTimeout(() => {
+					canSendSomeNews = true
+				}, 15000)
+
 			} else {
 				var err = new Error
 				err.text = 'no news'
 				reject(err)
 			}
 
-		}, 1100)
+		}, 2000)
 	})
 }

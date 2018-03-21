@@ -6,14 +6,8 @@ import bounce 			from './bounce.js'
 import './CustomScroll.less'
 
 /*
-		TODO
-	4) scroll bottom event bounce!
-
-
-		ISSUE 
-	1) when away from page scrolling to top
+	ISSUE 
 	2) when resizing from bottom to big screen - a lot of empty space
-	3) remove something from refresh
 */
 
 
@@ -95,6 +89,7 @@ class CustomScroll extends React.Component{
 	}
 
 	handleScrollTopAdd(added){
+		l('handleScrollTopAdd')
 		var elem = this.state.elem
 
 		//l(' ')
@@ -126,6 +121,7 @@ class CustomScroll extends React.Component{
 	}
 
 	handleWindowResize(){
+		l('windowresize')
 		this.refreshParameters()
 	}
 
@@ -192,6 +188,7 @@ class CustomScroll extends React.Component{
 
 			if(this.state.scrollBottom){
 				setTimeout(() => {
+					l('scrollBottomEvent')
 					this.bouncedScrollBottomEvent()
 				}, 100) // timer in order to avoid multiple dispatcher execution 
 				
@@ -200,8 +197,6 @@ class CustomScroll extends React.Component{
 	}
 
 	scrollBottomEvent(){
-		//l('scrollBottomEvent')
-
 		var scrollBottomEvent = new CustomEvent('scrollBottom', {
 			bubbles: true
 		})
@@ -225,6 +220,7 @@ class CustomScroll extends React.Component{
 		if(!this.state.scrollCursorDragged){
 			return
 		}
+		l('scrollCursorMove')
 
 		
 		var wrapperBoundingTop = this.wrapper.getBoundingClientRect().top

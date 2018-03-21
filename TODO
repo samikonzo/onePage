@@ -15,3 +15,10 @@ Uprise
 
 1) a lot of code 
 2) one class for all -> uprise--[up,down,left,right]--l[length]--t[time]--d[delay]--as[for autoshow]--ah[for autohide]--p[for show/hide by parent event]
+
+
+Scroll
+
+1) if scrollbottom bounce timer <= changePageHeight server answer  => autowaiting of changeBottom (loop : refreshParameters -> scrollBotomEvent -> bad server answer with no change of scrollBottomPlace -> refreshParameters...)
+
+CustomScroll.jsx bounceScrollBotomEvent time < bad server answer time

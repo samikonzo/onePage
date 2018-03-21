@@ -28,7 +28,8 @@ const NEWS_COUNT_PER_REQUEST = 4
 function getStateFromFlux(){
 	var fluxData = {
 		isLoading 	: NewsStore.isLoading(),
-		news 		: NewsStore.getNews()
+		news 		: NewsStore.getNews(),
+		isNoNews 	: NewsStore.getNoNews(),
 	}
 
 	return fluxData
@@ -41,6 +42,7 @@ class News extends React.Component{
 
 		this.state = Object.assign({
 			listeners : {},
+			noNewsMessage : 'no news else, please try later'
 		}, getStateFromFlux(),)
 
 
@@ -71,10 +73,9 @@ class News extends React.Component{
 	componentWillReceiveProps(nextProps){}
 
 
-
 	_hideContent(){
 		return new Promise((resolve, reject) => {
-			resolve()
+			setTimeout( () => {resolve()}, 0)
 		})
 	}
 
@@ -84,10 +85,21 @@ class News extends React.Component{
 	}
 
 	_newsRefresh(){
-		this.setState(getStateFromFlux(), this._emitListeners)
+		l('_newsRefresh')
+
+		var previousCountOfNews = this.state.news.length
+
+		this.setState(getStateFromFlux(), () => {
+
+			var currentCountOfNews = this.state.news.length
+			if(previousCountOfNews != currentCountOfNews){
+				this._emitListeners	()
+			}
+		})
 	}
 
 	_emitListeners(){
+		l('emitLissteners')
 		for(var item in this.state.listeners){
 			var elem = this.state.listeners[item]
 			if(elem.externalRefresh) elem.externalRefresh()
@@ -104,13 +116,14 @@ class News extends React.Component{
 					)
 				})}
 
-				<Loading showed={this.state.isLoading}/>
+				<Loading showed={this.state.isLoading} showedMsg={this.state.isNoNews} msg={this.state.noNewsMessage} alone={this.state.news.length == 0}/>
 
 				<CustomScroll elem={this.elem} ref={elem => this.state.listeners.CustomScroll = elem}/>
 			</div>
 		)
 	}
 }
+
 
 
 

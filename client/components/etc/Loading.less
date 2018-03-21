@@ -1,20 +1,26 @@
+
 .Loading{
 	overflow: hidden;
-	transition: opacity 1s;
-	display: none;
+	width: 100%;
+	line-height: 140px;
+	text-align: center;
+	height: 140px;
+	position: relative;
 
-	&--showed{
-		width: 100%;
-		line-height: 140px;
-		text-align: center;
-		height: 140px;
-		opacity: 1;
-		
-		display: flex;
-		flex-flow: column;
-		justify-content: center;
+
+	&--alone{
+		height: 100%;
 	}
+}
 
+.Loading__animation{
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	text-align: center;
+	width: 100%;
+	opacity: 0;
+	transition: 1s;
 
 	& ul{
 		width: 100%;
@@ -45,7 +51,26 @@
 			animation-delay: .6s;
 		}
 	}
+
+	&--showed{
+		opacity: 1;
+	}
 }
+
+.Loading__message{
+	opacity: 0;
+	transition: 1s;
+
+	&--showed{
+		transition: 1s .7s;
+		opacity: 1;
+	}
+}
+
+.Loading__word{
+	display: inline-block;
+	margin-right: 5px;
+} 
 
 @keyframes blink{
 	from{
@@ -72,4 +97,4 @@
 		background: lightgrey;
 		//opacity: 0;
 	}
-}
+} 

@@ -50,8 +50,6 @@ Dispatcher.register(function(action){
 			if(news.length < newsClientHas.length + count){
 				getNewsFromServer(news.length).then(
 					data => { 
-						//l(data)	
-
 						news = news.concat(data)
 						newsClientHas = newsClientHas.concat( news.slice(newsClientHas.length, newsClientHas.length + count) )
 						noNews = false
@@ -60,17 +58,13 @@ Dispatcher.register(function(action){
 					},
 
 					err => { 
-						//l(err.text) 
-
-
 						noNews = true
 						loading = false			
 						NewsStore.emitNewsChange()
 					}
 				)
+				
 			} else {
-
-				//l(' ENOUGHT ')
 				newsClientHas = newsClientHas.concat( news.slice(newsClientHas.length, newsClientHas.length + count) )
 				loading = false
 				NewsStore.emitNewsChange()
@@ -91,6 +85,7 @@ const NewsStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	emitNewsChange(){
+		l('NewsStore emitNewsChange')
 		this.emit(EVENTS.NEWS_CHANGE)
 	},
 
@@ -102,6 +97,10 @@ const NewsStore = Object.assign({}, EventEmitter.prototype, {
 
 	getNews(){
 		return newsClientHas
+	},
+
+	getNoNews(){
+		return noNews
 	},
 
 	clearClientHas(){

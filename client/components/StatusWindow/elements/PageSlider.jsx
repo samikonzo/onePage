@@ -42,8 +42,8 @@ class PageSlider extends React.Component{
 						<div key={i}
 							className={className}
 							onClick={this.handleItemCLick}
-							href={page.href}
-						></div>
+							href={page.href}>
+						</div>
 					)
 				})}
 			</div>
