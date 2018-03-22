@@ -9,7 +9,8 @@ class PageCounter extends React.Component{
 		super(props)
 
 		this.state = {
-			currentPageNum : this.props.currentPageNum
+			currentPageNum : this.props.currentPageNum,
+			visibility : this.props.visibility,
 		}
 
 		this._showContent = this._showContent.bind(this)
@@ -27,14 +28,18 @@ class PageCounter extends React.Component{
 
 	componentWillReceiveProps(newProps){
 		if(newProps.currentPageNum != this.state.currentPageNum){
-
 			this._hideContent()
 				.then( () => {
 					this.setState({
-						currentPageNum : newProps.currentPageNum
+						currentPageNum : newProps.currentPageNum,
+						visibility : newProps.visibility,
 					}, this._showContent)
 				})
 		}
+
+		this.setState({
+			visibility : newProps.visibility
+		})
 	}
 
 	_showContent(){
@@ -52,6 +57,9 @@ class PageCounter extends React.Component{
 
 	render(){
 		var currentPageNum = this.state.currentPageNum != undefined ? this.state.currentPageNum + 1 : ''
+
+		var className = "PageCounter "
+		if(!this.state.visibility) className += "PageCounter--hidden"
 
 		return(
 			<div className="PageCounter" ref={elem => this.elem = elem}>

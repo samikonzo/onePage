@@ -65,11 +65,16 @@ class NewsItem extends React.Component{
 
 
 	render(){
+
+		l(this.props)
+		//var link = window.location.href.split(window.location.pathname)[1] + this.props.item.guid.split('news/')[1]
+		var pathname = window.location.href.split('/#/')[1] || window.location.pathname
+		var link = pathname + '/' + this.props.item._id
 		var className = `NewsItem uprise--right uprise--delay${this.state.delay} uprise--auto `
 
 		return (
 			<div ref={elem=>this.elem=elem} className={className}> 
-				<h2 className="NewsItem__title"> {this.state.title} </h2>
+				<h2 className="NewsItem__title" href={link} onClick={this.props._handleChangePage}> {this.state.title} </h2>
 				<img className="NewsItem__img uprise--left uprise--parent uprise--delay1" src={this.state.enclosure && this.state.enclosure._url} />
 				<p className="NewsItem__description"> 
 					{this.state.description && this.state.description.__cdata}

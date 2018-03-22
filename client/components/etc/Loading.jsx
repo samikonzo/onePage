@@ -55,7 +55,6 @@ class Loading extends React.Component{
 
 		if(this.state.showedMsg) LoadingMessageClass += "Loading__message--showed"
 
-		l(this.state)
 		
 		return(
 			<div className={LoadingClass} ref={elem => this.elem = elem}>

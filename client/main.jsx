@@ -4,7 +4,7 @@ const App 		= require('./components/App.jsx')
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 
 
-/*
+
 ReactDOM.render(
 	<HashRouter>
 		<App />
@@ -12,9 +12,9 @@ ReactDOM.render(
 	document.getElementById('app')
 )
 
-*/
 
 
+/*
 ReactDOM.render(
 	<BrowserRouter>
 		<App />
@@ -23,3 +23,4 @@ ReactDOM.render(
 )
 
 
+*/

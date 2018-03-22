@@ -50,6 +50,12 @@ Dispatcher.register(function(action){
 			if(news.length < newsClientHas.length + count){
 				getNewsFromServer(news.length).then(
 					data => { 
+						l(data)
+						data.forEach((obj, i) => {
+							obj._id = news.length + i
+						})
+
+
 						news = news.concat(data)
 						newsClientHas = newsClientHas.concat( news.slice(newsClientHas.length, newsClientHas.length + count) )
 						noNews = false
@@ -85,7 +91,7 @@ const NewsStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	emitNewsChange(){
-		l('NewsStore emitNewsChange')
+		//l('NewsStore emitNewsChange')
 		this.emit(EVENTS.NEWS_CHANGE)
 	},
 

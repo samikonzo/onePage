@@ -89,7 +89,7 @@ class CustomScroll extends React.Component{
 	}
 
 	handleScrollTopAdd(added){
-		l('handleScrollTopAdd')
+		//l('handleScrollTopAdd')
 		var elem = this.state.elem
 
 		//l(' ')
@@ -121,7 +121,7 @@ class CustomScroll extends React.Component{
 	}
 
 	handleWindowResize(){
-		l('windowresize')
+		//l('windowresize')
 		this.refreshParameters()
 	}
 
@@ -188,7 +188,7 @@ class CustomScroll extends React.Component{
 
 			if(this.state.scrollBottom){
 				setTimeout(() => {
-					l('scrollBottomEvent')
+					//l('scrollBottomEvent')
 					this.bouncedScrollBottomEvent()
 				}, 100) // timer in order to avoid multiple dispatcher execution 
 				

@@ -1,11 +1,14 @@
-import React 		from 'react'
-import AppActions 	from '../../../actions/AppActions.js'
-import PageStore 	from '../../../stores/PageStore.js'
-import NewsStore	from '../../../stores/NewsStore.js'
-import Uprise 		from '../../etc/uprise.js'
-import CustomScroll from '../../etc/CustomScroll.jsx'
-import NewsItem 	from './NewsItem.jsx'
-import Loading 		from '../../etc/Loading.jsx'
+import React 			from 'react'
+import {Route, Link}	from 'react-router-dom'
+
+
+import AppActions 		from '../../../actions/AppActions.js'
+import PageStore 		from '../../../stores/PageStore.js'
+import NewsStore		from '../../../stores/NewsStore.js'
+import NewsItem 		from './NewsItem.jsx'
+import Loading 			from '../../etc/Loading.jsx'
+import CustomScroll 	from '../../etc/CustomScroll.jsx'
+import Uprise 			from '../../etc/uprise.js'
 
 import './News.less'
 
@@ -50,6 +53,8 @@ class News extends React.Component{
 		this._newsRefresh 		= this._newsRefresh.bind(this)
 		this._handleNewsRequest = this._handleNewsRequest.bind(this)
 		this._emitListeners		= this._emitListeners.bind(this)
+
+		l(props)
 	}
 
 	componentDidMount(){
@@ -59,6 +64,8 @@ class News extends React.Component{
 		NewsStore.addNewsChangeListener(this._newsRefresh)
 
 		this.elem.wheelBuzy = true  // disable page changing by mwheel
+
+		this._handleNewsRequest()
 
 		this.elem.addEventListener('scrollBottom', this._handleNewsRequest) // emit first _handeNewsRequest
 	}
@@ -80,12 +87,11 @@ class News extends React.Component{
 	}
 
 	_handleNewsRequest(){
-		//l('_handleNewsRequest')
 		AppActions.getNews(NEWS_COUNT_PER_REQUEST)
 	}
 
 	_newsRefresh(){
-		l('_newsRefresh')
+		//l('_newsRefresh')
 
 		var previousCountOfNews = this.state.news.length
 
@@ -99,7 +105,7 @@ class News extends React.Component{
 	}
 
 	_emitListeners(){
-		l('emitLissteners')
+		//l('emitLissteners')
 		for(var item in this.state.listeners){
 			var elem = this.state.listeners[item]
 			if(elem.externalRefresh) elem.externalRefresh()
@@ -108,23 +114,23 @@ class News extends React.Component{
 
 	render(){
 		return(
-
-			<div ref={elem => this.elem = elem} className="NewsGrid">
+				<div ref={elem => this.elem = elem} className="News">
+		
 				{this.state.news && this.state.news.map( (item, i) => {
 					return (
-						<NewsItem key={i} item={item} delay={3}/>
+						<NewsItem key={i} item={item} delay={3} _handleChangePage={this.props._handleChangePage}/>
 					)
 				})}
 
 				<Loading showed={this.state.isLoading} showedMsg={this.state.isNoNews} msg={this.state.noNewsMessage} alone={this.state.news.length == 0}/>
 
 				<CustomScroll elem={this.elem} ref={elem => this.state.listeners.CustomScroll = elem}/>
+
+
 			</div>
 		)
 	}
 }
-
-
 
 
 

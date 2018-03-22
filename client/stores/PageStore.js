@@ -148,17 +148,14 @@ const PageStore = Object.assign({}, EventEmitter.prototype, {
 				_currentPageHref = location.href.split(location.host)[1]
 			}
 
+			//l('_currentPageHref : ', _currentPageHref)
 			return _currentPageHref
 		},
 
 		getCurrentPageNum(){
 			this.getCurrentPageHref();
 
-			//if(_currentPageNum == undefined){
-			Pages.forEach( (page, i) => {
-				if(page.href == _currentPageHref) _currentPageNum = i
-			})
-			//}
+			_currentPageNum = this.getPageNumByHref(_currentPageHref)
 
 			return _currentPageNum
 		},
@@ -168,9 +165,16 @@ const PageStore = Object.assign({}, EventEmitter.prototype, {
 		},
 
 		getPageNumByHref(href){
-			Pages.forEach( (page, num) => {
-				if(page.href == href) return num
-			})
+			/**
+			*	For HashRouter needs split href by /#/
+			*/
+
+			href = href.split('/#')[1].trim() || href
+
+			for(var i = 0; i < Pages.length; i++){
+				var page = Pages[i]
+				if(page.href == href) return i
+			}
 		}
 
 })

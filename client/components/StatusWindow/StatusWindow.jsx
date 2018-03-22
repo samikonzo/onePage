@@ -13,11 +13,34 @@ import PageSlider from 	'./elements/PageSlider.jsx'
 import './StatusWindow.less'
 
 
+/* A LOT OF LOGICAL ERROS */
+
+function getStateFromFlux(){
+	var flux = {
+		pages : PageStore.getPages(),
+		currentPageHref : PageStore.getCurrentPageHref(),
+		currentPageNum : PageStore.getCurrentPageNum(),
+	}
+
+	if(flux.currentPageNum == undefined){
+		flux.visibility = {}
+		flux.visibility.PageCounter = false
+		flux.visibility.PageSlider = false
+	}
+
+	l(flux)
+
+	return flux
+}
+
+
 class StatusWindow extends React.Component{
 	constructor(props){
 		super(props)
 
-		this.state = { 
+		this.state = getStateFromFlux()
+
+		/*this.state = { 
 			pages : PageStore.getPages(),
 			currentPageHref : PageStore.getCurrentPageHref(),
 			currentPageNum : PageStore.getCurrentPageNum(),
@@ -27,7 +50,7 @@ class StatusWindow extends React.Component{
 				PageSlider 	: true,
 			}
 		}
-
+*/
 		//l(this.state)
 
 
@@ -41,10 +64,11 @@ class StatusWindow extends React.Component{
 		PageStore.addPageChangeListener(this.deselectCurrent)
 		PageStore.addHistoryChangeListener(this.onHistoryChange)
 
-		this.setState({
+		/*this.setState({
 			currentPageHref: PageStore.getCurrentPageHref(),
+		})*/
 
-		})
+		this.setState(getStateFromFlux())
 	}
 
 	componentWillUnmout(){
@@ -83,6 +107,7 @@ class StatusWindow extends React.Component{
 	}
 
 	onHistoryChange(){
+		l('history changed')
 		this.setState({
 			currentPageHref: PageStore.getCurrentPageHref(),
 			currentPageNum : PageStore.getCurrentPageNum()
@@ -90,6 +115,12 @@ class StatusWindow extends React.Component{
 	}
 
 	render(){
+
+		l(' ')
+		l(' STATUS WINDOW ')
+		l(this.state.visibility)
+		l(' ')
+
 		return(
 			<div className="StatusWindow">
 				

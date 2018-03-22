@@ -2,6 +2,7 @@
 import React 				from 'react'
 import { Switch, Route } 	from 'react-router-dom'
 import PageStore			from '../../stores/PageStore.js'
+import AppActions 			from '../../actions/AppActions.js'
 
 //	style
 import './ContentBox.less'
@@ -11,6 +12,7 @@ import Home 	from './pages/Home.jsx'
 import Items 	from './pages/Items.jsx'
 import Contacts from './pages/Contacts.jsx'
 import News 	from './pages/News.jsx'
+import NewsSelected from './pages/NewsSelected.jsx'
 import Page404 	from './pages/Page404.jsx'
 
 const l = console.log;
@@ -25,8 +27,9 @@ class ContentBox extends React.Component{
 			runAfterShow : [],
 		}
 
-		this._hideContent = this._hideContent.bind(this)
-		this._showContent = this._showContent.bind(this)
+		this._hideContent 		= this._hideContent.bind(this)
+		this._showContent 		= this._showContent.bind(this)
+		this._handleChangePage 	= this._handleChangePage.bind(this)
 	}
 
 	componentWillMount(){
@@ -68,6 +71,11 @@ class ContentBox extends React.Component{
 		})
 	}
 
+	_handleChangePage(e){
+		var href = e.target.getAttribute('href')
+		AppActions.changePage(href)
+	}
+
 	render(){
 		var className = "ContentBox"
 		var hidden = !this.state.show ? ' ContentBox--hidden' : ''
@@ -103,9 +111,22 @@ class ContentBox extends React.Component{
 						}
 					}/>
 
-					<Route path='/news' render={ (props) => {
+					<Route exact path='/news' render={ (props) => {
 							return(
-								<News {...props}
+								<News 
+									{...props} 
+									_handleChangePage={this._handleChangePage} 
+									ref={item => this.currentOpen = item} 
+								/>
+							)
+						}
+					}/>
+
+					<Route  path='/news/:id' render={ (props) => {
+							return(
+								<NewsSelected 
+									{...props} 
+									_handleChangePage={this._handleChangePage} 
 									ref={item => this.currentOpen = item} 
 								/>
 							)
@@ -113,7 +134,7 @@ class ContentBox extends React.Component{
 					}/>
 
 
-					<Route path='/:url' component={Page404}/>
+					{/*<Route path='/:url' component={Page404}/>*/}
 
 				</Switch>
 			</div>

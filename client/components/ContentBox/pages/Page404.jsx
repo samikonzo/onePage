@@ -7,7 +7,9 @@ class Page404 extends React.Component{
 	}
 
 	render(){
+		l(this.props.match)
 		return (
+
 			<div className="Page404" ref={elem => this.elem = elem}>
 				<p>Error 404</p>
 				<p>There is no page with url : {this.props.match.params.url}</p>
