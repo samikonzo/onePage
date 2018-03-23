@@ -37,9 +37,9 @@ class PageCounter extends React.Component{
 				})
 		}
 
-		this.setState({
+		/*this.setState({
 			visibility : newProps.visibility
-		})
+		})*/
 	}
 
 	_showContent(){
@@ -62,7 +62,7 @@ class PageCounter extends React.Component{
 		if(!this.state.visibility) className += "PageCounter--hidden"
 
 		return(
-			<div className="PageCounter" ref={elem => this.elem = elem}>
+			<div className={className} ref={elem => this.elem = elem}>
 				<span className="PageCounter__current uprise--time5 uprise--delay0 uprise--length1">
 					{
 						currentPageNum

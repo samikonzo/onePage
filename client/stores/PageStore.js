@@ -169,6 +169,8 @@ const PageStore = Object.assign({}, EventEmitter.prototype, {
 			*	For HashRouter needs split href by /#/
 			*/
 
+			l('Page Store getPageNumByHref href : ', href)
+
 			href = href.split('/#')[1].trim() || href
 
 			for(var i = 0; i < Pages.length; i++){

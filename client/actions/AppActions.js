@@ -44,6 +44,13 @@ const AppActions = {
 			type : Constants.GET_NEWS,
 			count: count,
 		})
+	},
+
+	getSingleNews(num){
+		Dispatcher.dispatch({
+			type : Constants.GET_SINGLE_NEWS,
+			num: num,
+		})
 	}
 
 }

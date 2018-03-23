@@ -38,7 +38,7 @@ class Loading extends React.Component{
 		var LoadingAnimationClass = "Loading__animation "
 		var LoadingMessageClass = "Loading__message "
 
-		var msg = this.state.msg.split(' ').map( (word, i) => {
+		var msg = this.state.msg && this.state.msg.split(' ').map( (word, i) => {
 
 			var randomDelayTime = Math.floor( Math.random() * 5 )
 
@@ -49,11 +49,14 @@ class Loading extends React.Component{
 			return (<span className={className} key={i}>{word}</span>)
 		})
 
-		if(this.state.alone) LoadingClass += 'Loading--alone'
+		if(this.state.alone) LoadingClass += 'Loading--alone '
 
-		if(this.state.showed) LoadingAnimationClass += "Loading__animation--showed"
+		if(this.state.showed){
+			LoadingClass += 'Loading--showed '
+			LoadingAnimationClass += "Loading__animation--showed " 
+		}
 
-		if(this.state.showedMsg) LoadingMessageClass += "Loading__message--showed"
+		if(this.state.showedMsg) LoadingMessageClass += "Loading__message--showed "
 
 		
 		return(

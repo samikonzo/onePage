@@ -7,12 +7,14 @@ import getNewsFromServer 	from './NewsGet.js'
 
 var news = []
 var newsClientHas = []
+var singleNews
 var loading = false
 var noNews = false
 
 
 const EVENTS = {
-	NEWS_CHANGE : 'NEWS_CHANGE'
+	NEWS_CHANGE : 'NEWS_CHANGE',
+	SINGLE_NEWS_CHANGE : 'SINGLE_NEWS_CHANGE',
 }
 
 
@@ -38,8 +40,8 @@ Dispatcher.register(function(action){
 	switch(action.type){
 		case Constants.GET_NEWS : {
 			if(loading) return
-			loading = true
 
+			loading = true
 			noNews = false
 
 			NewsStore.emitNewsChange()
@@ -78,10 +80,49 @@ Dispatcher.register(function(action){
 
 			break;
 		}
+
+		case Constants.GET_SINGLE_NEWS : {
+			if(loading) return
+				
+			loading = true
+			NewsStore.emitSingleNewsChange()
+
+			var num = action.num
+
+			if(news.length - 1 < num){
+				getNewsFromServer(num).then(
+
+					data => {
+						l('NewsStore : 1 DATA')
+						loading = false
+						singleNews = data[0]
+						NewsStore.emitSingleNewsChange()						
+					},
+
+					err => {
+						l('NewsStore : 2 ERR ')
+						loading = false
+						singleNews = undefined
+						NewsStore.emitSingleNewsChange()
+					}
+				)
+
+
+			} else {
+				l('NewsStore : 3 ELSE ')
+				singleNews = news[num]
+				loading = false
+				NewsStore.emitSingleNewsChange()
+			}
+
+		}
 	}
 })
 
 const NewsStore = Object.assign({}, EventEmitter.prototype, {
+
+	// NewsCahnge
+
 	addNewsChangeListener(f){
 		this.on(EVENTS.NEWS_CHANGE, f)
 	},
@@ -94,6 +135,22 @@ const NewsStore = Object.assign({}, EventEmitter.prototype, {
 		//l('NewsStore emitNewsChange')
 		this.emit(EVENTS.NEWS_CHANGE)
 	},
+
+
+	//	SingleNewsChange
+
+	addSingleNewsChangeListener(f){
+		this.on(EVENTS.SINGLE_NEWS_CHANGE, f)
+	},
+
+	removeSingleNewsChangeListener(f){
+		this.removeListener(EVENTS.SINGLE_NEWS_CHANGE, f)
+	},
+
+	emitSingleNewsChange(){
+		this.emit(EVENTS.SINGLE_NEWS_CHANGE)
+	},
+
 
 
 
@@ -111,7 +168,13 @@ const NewsStore = Object.assign({}, EventEmitter.prototype, {
 
 	clearClientHas(){
 		newsClientHas = []
+	},
+
+	getSingleNews(){
+		l('NewsStore getSingleNews : ', singleNews)
+		return singleNews
 	}
+
 })
 
 

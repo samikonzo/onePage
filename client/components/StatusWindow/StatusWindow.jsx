@@ -15,42 +15,22 @@ import './StatusWindow.less'
 
 /* A LOT OF LOGICAL ERROS */
 
-function getStateFromFlux(){
-	var flux = {
-		pages : PageStore.getPages(),
-		currentPageHref : PageStore.getCurrentPageHref(),
-		currentPageNum : PageStore.getCurrentPageNum(),
-	}
-
-	if(flux.currentPageNum == undefined){
-		flux.visibility = {}
-		flux.visibility.PageCounter = false
-		flux.visibility.PageSlider = false
-	}
-
-	l(flux)
-
-	return flux
-}
-
 
 class StatusWindow extends React.Component{
 	constructor(props){
 		super(props)
 
-		this.state = getStateFromFlux()
+		//this.state = getStateFromFlux()
 
-		/*this.state = { 
+		this.state = { 
 			pages : PageStore.getPages(),
 			currentPageHref : PageStore.getCurrentPageHref(),
 			currentPageNum : PageStore.getCurrentPageNum(),
 			visibility: {
 				LinkMenu 	: false,
-				PageCounter : true,
-				PageSlider 	: true,
 			}
 		}
-*/
+
 		//l(this.state)
 
 
@@ -58,6 +38,7 @@ class StatusWindow extends React.Component{
 		this.handleToggleMenuVisibility = this.handleToggleMenuVisibility.bind(this)
 		this.deselectCurrent			= this.deselectCurrent.bind(this)
 		this.onHistoryChange 			= this.onHistoryChange.bind(this)
+		this.getStateFromFlux 			= this.getStateFromFlux.bind(this)
 	}
 
 	componentDidMount(){
@@ -68,7 +49,7 @@ class StatusWindow extends React.Component{
 			currentPageHref: PageStore.getCurrentPageHref(),
 		})*/
 
-		this.setState(getStateFromFlux())
+		this.setState(this.getStateFromFlux())
 	}
 
 	componentWillUnmout(){
@@ -107,19 +88,41 @@ class StatusWindow extends React.Component{
 	}
 
 	onHistoryChange(){
-		l('history changed')
+		//l('history changed')
 		this.setState({
 			currentPageHref: PageStore.getCurrentPageHref(),
 			currentPageNum : PageStore.getCurrentPageNum()
 		})
 	}
 
+
+	getStateFromFlux(){
+	var flux = {
+		pages : PageStore.getPages(),
+		currentPageHref : PageStore.getCurrentPageHref(),
+		currentPageNum : PageStore.getCurrentPageNum(),
+	}
+	
+	return flux
+}
+
+
+
 	render(){
 
-		l(' ')
-		l(' STATUS WINDOW ')
-		l(this.state.visibility)
-		l(' ')
+		//l(' ')
+		//l(' STATUS WINDOW ')
+		//l(this.state.visibility)
+		//l(' ')
+
+
+		var isCurrentPageNum = ( this.state.currentPageNum != undefined )
+		var relativeVisibility = {
+			PageCounter : isCurrentPageNum, 
+			PageSlider : isCurrentPageNum,
+		}
+
+		//l(relativeVisibility)
 
 		return(
 			<div className="StatusWindow">
@@ -141,13 +144,13 @@ class StatusWindow extends React.Component{
 
 				<PageCounter 
 					{...this.state}
-					visibility = {this.state.visibility.PageCounter}
+					visibility = {relativeVisibility.PageCounter}
 				/>
 
 				<PageSlider 
 					{...this.state}
 					handleItemClick = {this.handleLinkClick}
-					visibility = {this.state.visibility.PageSlider}
+					visibility = {relativeVisibility.PageSlider}
 				/>
 			</div>
 		)

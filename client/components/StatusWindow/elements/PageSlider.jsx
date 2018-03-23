@@ -11,6 +11,7 @@ class PageSlider extends React.Component{
 		this.state = {
 			pages: this.props.pages,
 			currentPageNum : this.props.currentPageNum,
+			visibility : this.props.visibility,
 		}
 
 		//l(this.props)
@@ -20,7 +21,8 @@ class PageSlider extends React.Component{
 
 	componentWillReceiveProps(newProps){
 		this.setState({
-			currentPageNum : newProps.currentPageNum
+			currentPageNum : newProps.currentPageNum,
+			visibility : newProps.visibility,
 		})
 	}
 
@@ -30,8 +32,12 @@ class PageSlider extends React.Component{
 	}
 
 	render(){
+
+		var className = 'PageSlider '
+		if(!this.state.visibility) className += 'PageSlider--hidden'
+
 		return(
-			<div className="PageSlider">
+			<div className={className}>
 
 				{this.state.pages.map( (page, i) => {
 					var className = 'PageSlider__slide'

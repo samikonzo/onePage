@@ -35,6 +35,10 @@ class NewsItem extends React.Component{
 		this.uprise.clear()
 	}
 
+	componentWillReceiveProps(nextProps){
+		this.setState(nextProps.item)
+	}
+
 	_showContent(){}
 	_hideContent(){
 		return new Promise((resolve, reject) => {

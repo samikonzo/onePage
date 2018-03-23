@@ -2,7 +2,8 @@
 	position: fixed;
 	z-index: 2;
 	left: 10px;
-	
+	opacity: 1;
+	transition: 1s;
 	transform: translateY(-50%);
 	top:50%;
 
@@ -36,6 +37,8 @@
 	
 	}
 
-
+	&--hidden{
+		opacity: 0;
+	}
 }
 

@@ -16,7 +16,7 @@ var canSendSomeNews = true
 export default function(currentCount){
 	return new Promise( (resolve, reject) => {
 		setTimeout(() => {
-			var pack = NewsSaved.slice(currentCount, currentCount + divider)
+			var pack = NewsSaved.slice(+currentCount, +currentCount + divider)
 
 			l('pack : ', pack)
 
@@ -26,7 +26,7 @@ export default function(currentCount){
 				canSendSomeNews = false
 				setTimeout(() => {
 					canSendSomeNews = true
-				}, 15000)
+				}, 0)
 
 			} else {
 				var err = new Error
